@@ -4,36 +4,60 @@ import { Canvas, useThree, useFrame, extend, useLoader } from '@react-three/fibe
 // import { OrbitControls, OrthographicCamera, PerspectiveCamera } from '@react-three/drei';
 // import { Line as DreiLine } from '@react-three/drei';
 import fonts from "./Fonts";
+import { total_data } from './Constants';
 import { useStore } from './Store';
 
-function Bar(props) {
-  const meshRef = useRef();
-  const scale = useStore((state) => state.scale);
+function Heatmap(){
+  const step = useStore((state) => state.narrativeStep);
+  const ref = useRef();
+  const temp = new THREE.Object3D()
+
+  const size = 0.1; //size of one box
+  const height = 20; //scale of value
+  const rowNum = 81;
+
+  const colors = [
+    new THREE.Color("#bed88c"), new THREE.Color("#cfe6a3"), new THREE.Color("#dceeb6"),
+    new THREE.Color("#eee2b6"), new THREE.Color("#fac4af"), new THREE.Color("#f0a095"),
+    new THREE.Color("#e88888"), new THREE.Color("#d67881"), new THREE.Color("#e06177")
+  ];
+
+  function colorMap(value){
+    let level = 0
+    if(value > 0.5) level = 0
+    else if(value > 0.1) level = 1
+    else if(value > 0.05) level = 2
+    else if(value > 0.01) level = 3
+    else if(value > 0.005) level = 4
+    else if(value > 0.001) level = 5
+    else if(value > 0.0005) level = 6
+    else if(value > 0.0001) level = 7
+    else level = 8
+  
+    return (colors[8-level]);
+  }
+
+  useLayoutEffect(() => {
+    // Set positions
+    for(let i = 0; i < total_data.length; i++) {
+      if(i%rowNum != 0){
+        temp.position.set((total_data[i][0] - 1816) * size, total_data[i][2] * height * 0.5, (80 - total_data[i][1]) * size);
+        temp.scale.set(size, total_data[i][2] * height, size);
+        temp.updateMatrix()
+        ref.current.setMatrixAt(i, temp.matrix);
+        ref.current.setColorAt(i, colorMap(total_data[i][2]))
+      }
+    }
+    // Update the instance
+    ref.current.instanceMatrix.needsUpdate = true
+  }, [])
 
   return (
-    <mesh
-      {...props}
-      ref={meshRef}
-      scale={[scale, props.height, scale]}
-      position={[props.x * scale, props.height / 2, props.z * scale]}
-    >
+    <instancedMesh ref={ref} args={[null, null, total_data.length]}>
       <boxGeometry />
-      <meshStandardMaterial color={props.color} />
-    </mesh>
-  );
+      <meshPhongMaterial transparent={true} opacity={1} side={THREE.DoubleSide} />
+    </instancedMesh>
+  )
 }
 
-function Chart(props) {
-  const progressVal = useStore((state) => state.progressVal);
-  const data = [2, 4, 6, 8, 10];
-  const colors = ["#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF"];
-  const groupRef = useRef();
-
-  const bars = data.map((d, i) => (
-    <Bar key={i} x={i} height={d} z={0} color={colors[i]} />
-  ));
-
-  return <group ref={groupRef} position={[0, 0, 0]}> {bars} </group>;
-}
-
-export { Chart }
+export { Heatmap }

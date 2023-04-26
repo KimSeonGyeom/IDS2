@@ -5,7 +5,9 @@ import create from 'zustand';
 const useStore = create((set) => ({
   progressVal: 0,
   setProgressVal: (val) => set((state) => {return {
-    progressVal: val
+    progressVal: val,
+    camPos: [1000 - state.progressVal * 10, 1000 - state.progressVal * 1, 1000 - state.progressVal * 3],
+    camZoom: (10 + state.progressVal * 1.2)<100? 10 + state.progressVal * 1.2: 100,
   }}),
 
   scale: 1,
@@ -13,11 +15,11 @@ const useStore = create((set) => ({
     scale: val
   }}),
 
-  camPos: [0, 0, 1000],
+  camPos: [1000, 1000, 1000],
   setCamPos: (val) => set((state) => {return {
     camPos: val
   }}),
-  camZoom: 6.25,
+  camZoom: 10,
   setCamZoom: (val) => set((state) => {return {
     camZoom: val
   }}),
@@ -26,7 +28,7 @@ const useStore = create((set) => ({
     progressVal: 0,
     scale: 1,
     camPos: [0, 0, 1000],
-    camZoom: 6.25,
+    camZoom: 1,
   }}),
 }));
 

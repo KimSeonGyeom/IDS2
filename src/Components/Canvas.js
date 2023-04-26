@@ -4,7 +4,7 @@ import { Canvas as THREECanvas, useFrame } from '@react-three/fiber'
 
 import { useStore } from '../BasicElements/Store';
 import { OrthoCamera } from '../BasicElements/Camera';
-import { Chart } from '../BasicElements/VizComponents';
+import { Heatmap } from '../BasicElements/VizComponents';
 
 function Canvas() {
   const mainCamera = useRef();
@@ -24,7 +24,7 @@ function Canvas() {
           <OrthoCamera ref={mainCamera} />
           <ambientLight />
           <pointLight position={[10, 10, 10]} />
-          <Chart />
+          <Heatmap />
         </THREECanvas>
       </div>
       <div id={"dummy"}> . </div>

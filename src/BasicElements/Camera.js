@@ -8,23 +8,10 @@ const OrthoCamera = React.forwardRef((props, ref) => {
   const mainCamera = useRef();
   const controls = useRef();
 
-  const progressVal = useStore((state) => state.progressVal);
   const camPos = useStore((state) => state.camPos);
   const setCamPos = useStore((state) => state.setCamPos);
   const camZoom = useStore((state) => state.camZoom);
   const setCamZoom = useStore((state) => state.setCamZoom);
-
-  useFrame((state, delta) => {
-    // console.log(progressVal);
-    // setCamPos([1000 - progressVal * 10, 1000 - progressVal * 1, 1000 - progressVal * 3]);
-    // mainCamera.current.position.setX(camPos[0] - progressVal * 10);
-    // mainCamera.current.position.setY(camPos[1] - progressVal * 1);
-    // mainCamera.current.position.setZ(camPos[2] - progressVal * 3);
-    // mainCamera.current.lookAt(camPos[0], camPos[1] - progressVal * 1, camPos[2] - 1);
-    // mainCamera.current.lookAt(0, 0, 0);
-    // mainCamera.current.updateProjectionMatrix();
-    // setCamZoom((10 + progressVal * 1.2)<100? 10 + progressVal * 1.2: 100);
-  });
 
   return(
     <>

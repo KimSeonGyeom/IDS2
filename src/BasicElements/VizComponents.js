@@ -8,7 +8,6 @@ import { total_data } from './Constants';
 import { useStore } from './Store';
 
 function Heatmap(){
-  const step = useStore((state) => state.narrativeStep);
   const ref = useRef();
   const temp = new THREE.Object3D()
 

@@ -15,10 +15,6 @@ function Animator() {
   const camZoom = useStore((state) => state.camZoom);
   const setCamZoom = useStore((state) => state.setCamZoom);
 
-  useEffect(() => {
-    
-  }, []);
-
   return (
     <div>
       <TextField id="outlined-basic" label="Scale" variant="outlined" size="small" value={scale}

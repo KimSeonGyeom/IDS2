@@ -1,13 +1,56 @@
-body {
+body, html, #root {
+  width: 100%;
+  height: 100%;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+#canvas {
+  width: 100%;
+  height: 100%;
+  position: sticky;
+  top: 0;
+}
+
+.canvas-parent {
+  width: calc(100% - 400px);
+  height: 100%;
+}
+
+#scroller {
+  height: 100%;
+  width: 100%;
+  overflow-y: scroll;
+  z-index: 10;
+}
+
+.box {
+  /* width: 100%; */
+  margin: 6px;
+  padding: 8px;
+  /* outline: 2px; */
+  /* outline-style: inset; */
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.upper-container {
+  display: flex;
+  flex-direction: row;
+  height: calc(100% - 400px);
+}
+
+.lower-container {
+  height: 400px;
+}
+
+.inspector {
+  width: 400px;
 }

@@ -44,13 +44,19 @@ body, html, #root {
 .upper-container {
   display: flex;
   flex-direction: row;
-  height: calc(100% - 400px);
+  height: calc(100% - 300px);
 }
 
 .lower-container {
-  height: 400px;
+  height: 300px;
 }
 
 .inspector {
   width: 400px;
+}
+
+/* slider width */
+.css-187mznn-MuiSlider-root {
+  width: calc(100% - 400px) !important;
+  min-width: 100px;
 }

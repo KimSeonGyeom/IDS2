@@ -20,6 +20,7 @@ function Animator() {
         {Number.parseFloat(progressVal).toFixed(2)}
       </div>
       <Slider 
+        id={"progressSlider"}
         min={0} max={100} step={0.1} value={progressVal} 
         onChange={(e, val) => setProgressVal(val)} 
         aria-label="Default" valueLabelDisplay="auto" />

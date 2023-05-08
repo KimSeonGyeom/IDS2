@@ -10,7 +10,7 @@ const useStore = create((set) => ({
   progressVal: 0,
   setProgressVal: (val) => set((state) => {
     const slider = document.getElementById('progressSlider');
-    console.log(slider);
+    // console.log(slider);
 
     return {
     progressVal: toFixed2(val),
@@ -35,6 +35,30 @@ const useStore = create((set) => ({
   setCamZoom: (val) => set((state) => {return {
     camZoom: val
   }}),
+
+  // x: 1816 - 2019
+  // y: 0 - 0.25
+  // z: 0 - 80
+  rowsOfInterest: [
+    { id: 1, x: 1990, y: 0.01, z: 40 },
+    { id: 2, x: 1930, y: null, z: 60 },
+    { id: 3, x: 1950,  y: 0.005, z: null },
+    { id: 4, x: 1940,  y: null, z: null },
+    { id: 5, x: null,  y: 0.007, z: 5 },
+    { id: 6, x: null, y: null, z: 20 },
+    { id: 7, x: null, y: 0.01, z: null },
+  ],
+  setRowsOfInterest: (val) => set((state) => {return { 
+    rowsOfInterest: val
+  }}),
+
+  pointOfInterest: [],
+  setPointOfInterest: (val) => set((state) => {
+    // console.log(val);
+    return {
+      pointOfInterest: val
+    }
+  }),
 
   reset: (val) => set((state) => {return {
     progressVal: 0,

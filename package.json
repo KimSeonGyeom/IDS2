@@ -5,6 +5,7 @@
   "dependencies": {
     "@mui/lab": "^5.0.0-alpha.128",
     "@mui/material": "^5.12.2",
+    "@mui/x-data-grid": "^6.3.1",
     "@react-three/drei": "^9.65.5",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",

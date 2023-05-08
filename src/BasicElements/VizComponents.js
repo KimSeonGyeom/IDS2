@@ -1,9 +1,9 @@
 import * as THREE from 'three'
-import React, { useRef, useLayoutEffect, useState, useMemo } from 'react'
-import { Canvas, useThree, useFrame, extend, useLoader } from '@react-three/fiber'
+import React, { useRef, useEffect, useLayoutEffect, useState, useMemo } from 'react'
+// import { Canvas, useThree, useFrame, extend, useLoader } from '@react-three/fiber'
 // import { OrbitControls, OrthographicCamera, PerspectiveCamera } from '@react-three/drei';
 // import { Line as DreiLine } from '@react-three/drei';
-import fonts from "./Fonts";
+// import fonts from "./Fonts";
 import { total_data } from './Constants';
 import { useStore } from './Store';
 
@@ -11,45 +11,68 @@ function Heatmap(){
   const ref = useRef();
   const temp = new THREE.Object3D()
 
+  const pointOfInterest = useStore((state) => state.pointOfInterest);
+
   const size = 0.1; //size of one box
   const height = 20; //scale of value
   const rowNum = 81;
+
+  let x = null;
+  let y = null;
+  let z = null;
 
   const colors = [
     new THREE.Color("#bed88c"), new THREE.Color("#cfe6a3"), new THREE.Color("#dceeb6"),
     new THREE.Color("#eee2b6"), new THREE.Color("#fac4af"), new THREE.Color("#f0a095"),
     new THREE.Color("#e88888"), new THREE.Color("#d67881"), new THREE.Color("#e06177")
   ];
-
-  function colorMap(value){
-    let level = 0
-    if(value > 0.5) level = 0
-    else if(value > 0.1) level = 1
-    else if(value > 0.05) level = 2
-    else if(value > 0.01) level = 3
-    else if(value > 0.005) level = 4
-    else if(value > 0.001) level = 5
-    else if(value > 0.0005) level = 6
-    else if(value > 0.0001) level = 7
-    else level = 8
   
-    return (colors[8-level]);
+  function colorMap(value){
+    if(value > 0.5) return colors[8];
+    else if(value > 0.1) return colors[7];
+    else if(value > 0.05) return colors[6];
+    else if(value > 0.01) return colors[5];
+    else if(value > 0.005) return colors[4];
+    else if(value > 0.001) return colors[3];
+    else if(value > 0.0005) return colors[2];
+    else if(value > 0.0001) return colors[1];
+  
+    return colors[0];
   }
 
   useLayoutEffect(() => {
-    // Set positions
     for(let i = 0; i < total_data.length; i++) {
-      if(i%rowNum != 0){
-        temp.position.set((total_data[i][0] - 1816) * size, total_data[i][2] * height * 0.5, (80 - total_data[i][1]) * size);
-        temp.scale.set(size, total_data[i][2] * height, size);
-        temp.updateMatrix()
-        ref.current.setMatrixAt(i, temp.matrix);
-        ref.current.setColorAt(i, colorMap(total_data[i][2]))
-      }
+      x = total_data[i][0];
+      y = total_data[i][2]
+      z = 80 - total_data[i][1];
+
+      temp.position.set((x - 1816) * size, y * height * 0.5, z * size);
+      temp.scale.set(size, y * height, size);
+      temp.updateMatrix()
+      ref.current.setMatrixAt(i, temp.matrix);
     }
-    // Update the instance
     ref.current.instanceMatrix.needsUpdate = true
   }, [])
+
+  useEffect(() => {
+    for(let i = 0; i < total_data.length; i++) {
+      x = total_data[i][0];
+      y = total_data[i][2];
+      z = 80 - total_data[i][1];
+
+      ref.current.setColorAt(i, colorMap(y));
+      if(pointOfInterest.length != 0){
+        if(
+          (pointOfInterest[0].x == null || pointOfInterest[0].x == x) && 
+          (pointOfInterest[0].y == null || Math.abs(pointOfInterest[0].y - y) < 0.01) && 
+          (pointOfInterest[0].z == null || pointOfInterest[0].z == z)
+        ){
+          ref.current.setColorAt(i, new THREE.Color("#000000"))
+        }
+      }
+    } 
+    ref.current.instanceColor.needsUpdate = true
+  }, [pointOfInterest.length])
 
   return (
     <instancedMesh ref={ref} args={[null, null, total_data.length]}>

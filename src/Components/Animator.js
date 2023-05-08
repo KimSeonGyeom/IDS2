@@ -1,18 +1,14 @@
 import * as THREE from 'three'
-import React, { useRef, useState, useEffect, useCallback, useLayoutEffect, useMemo, Suspense } from 'react'
+import React, { useRef, useLayoutEffect, useMemo } from 'react'
 
 import { Slider } from '@mui/material';
-import { styled } from '@mui/material/styles';
+// import { styled } from '@mui/material/styles';
 
 import { useStore } from '../BasicElements/Store';
 
 function Animator() {
   const progressVal = useStore((state) => state.progressVal);
   const setProgressVal = useStore((state) => state.setProgressVal);
-
-  useEffect(() => {
-    
-  }, []);
 
   return (
     <div>

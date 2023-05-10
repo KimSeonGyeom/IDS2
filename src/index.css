@@ -1,0 +1,65 @@
+body, html, #root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#canvas {
+  width: 1000px;
+  height: calc(100% - 2px);
+  position: sticky;
+  top: 0;
+  display: inline-block;
+  border: 1px solid;
+}
+
+.canvas-parent {
+  width: calc(100% - 400px);
+  height: 100%;
+}
+
+#canvasContainer {
+  height: 100%;
+  width: 100%;
+  overflow-y: scroll;
+  z-index: 10;
+  text-align: center;
+}
+
+.box {
+  /* width: 100%; */
+  margin: 6px;
+  padding: 8px;
+  /* outline: 2px; */
+  /* outline-style: inset; */
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.upper-container {
+  display: flex;
+  flex-direction: row;
+  height: calc(100% - 300px);
+}
+
+.lower-container {
+  height: 300px;
+}
+
+.inspector {
+  width: 400px;
+}
+
+/* slider width */
+.css-187mznn-MuiSlider-root {
+  width: calc(100% - 400px) !important;
+  min-width: 100px;
+}

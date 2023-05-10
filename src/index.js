@@ -1,5 +1,6 @@
 import React, { useLayoutEffect, Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
+import { shallow } from 'zustand/shallow'
 import './index.css';
 import THREECanvas from './Components/Canvas';
 import Inspector from './Components/Inspector';
@@ -8,17 +9,34 @@ import Animator from './Components/Animator';
 
 import { scrollLength } from './BasicElements/Constants'
 
-import { useCanvasStore } from './BasicElements/Store';
+import { useCanvasStore, useClipStore } from './BasicElements/Store';
 
 function CanvasBox() {
-  const setProgressVal = useCanvasStore((state) => state.setProgressVal);
+  const [setTarget, setProgressVal] = useCanvasStore((state) => [state.setTarget, state.setProgressVal], shallow);
+  const [getAnimation] = useClipStore((state) => [state.getAnimation], shallow);
+
+  const requestRef = React.useRef();
+  const previousTimeRef = React.useRef();
+
+  const animate = time => {
+    if (previousTimeRef.current != undefined) {
+      setTarget(document.getElementById("scroller").scrollTop);
+      setProgressVal();
+    }
+    previousTimeRef.current = time;
+    requestRef.current = requestAnimationFrame(animate);
+  }
 
   useLayoutEffect(() => {
+    getAnimation();
+
     document.getElementById("dummy").style.height = scrollLength + "px";
+    requestRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(requestRef.current);
   }, []);
 
   return(
-    <div id={"scroller"} onScroll={() => setProgressVal(100 * document.getElementById("scroller").scrollTop / scrollLength)}>
+    <div id={"scroller"}>
       <div id={"canvas"}>
         <THREECanvas frameloop="demand" />
       </div>

@@ -13,17 +13,13 @@ const OrthoCamera = React.forwardRef((props, ref) => {
   const [animation] = useClipStore((state) => [state.animation], shallow);
   const [progressVal] = useCanvasStore((state) => [state.progressVal], shallow);
 
-  // const [progressVal, camPosX, camPosY, camPosZ, camZoom] = useCanvasStore(
-  //   (state) => [ state.progressVal, state.camPosX, state.camPosY, state.camPosZ, state.camZoom ], 
-  //   shallow 
-  // );
-
   // const { gl } = useThree();
   useFrame(() => {
-    mainCamera.current.position.x = animation[(scrollLength * progressVal / 100).toFixed()].camX;
-    mainCamera.current.position.y = animation[(scrollLength * progressVal / 100).toFixed()].camY;
-    mainCamera.current.position.z = animation[(scrollLength * progressVal / 100).toFixed()].camZ;
-    mainCamera.current.zoom = animation[(scrollLength * progressVal / 100).toFixed()].camZoom;
+    console.log(progressVal);
+    mainCamera.current.position.x = animation[progressVal].camX;
+    mainCamera.current.position.y = animation[progressVal].camY;
+    mainCamera.current.position.z = animation[progressVal].camZ;
+    mainCamera.current.zoom = animation[progressVal].camZoom;
     // console.log(gl.info.render)
   })
 
@@ -37,7 +33,7 @@ const OrthoCamera = React.forwardRef((props, ref) => {
         enableZoom={false}
         enableRotate={true}
         zoomSpeed={0.25}
-        style={{zIndex: 5}}/>
+        style={{zIndex: 5}} />
     </>
   );
 });

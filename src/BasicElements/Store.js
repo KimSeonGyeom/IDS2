@@ -28,20 +28,10 @@ const animationGenerator = (clips) =>{
 }
 
 const useCanvasStore = create((set) => ({
-  progressVal: 0,
-  setProgressVal: (val) => set((state) => {
-    return {
-    progressVal: toFixed2(val),
-    // camPosX: toFixed2(1000.0 - state.progressVal * 10), 
-    // camPosY: toFixed2(1000.0 - state.progressVal * 1), 
-    // camPosZ: toFixed2(1000.0 - state.progressVal * 3),
-    // camZoom: toFixed2((10 + state.progressVal * 1.2)<100? 10 + state.progressVal * 1.2: 100),
+  target: 0, setTarget: (val) => set((state) => { return { target: val }}),
+  progressVal: 0, setProgressVal: () => set((state) => { return { 
+    progressVal: Math.floor(state.progressVal + (state.target - state.progressVal) * 0.07)
   }}),
-
-  camPosX: 1000, setCamPosX: (val) => set((state) => {return { camPosX: parseFloat(val) }}),
-  camPosY: 1000, setCamPosY: (val) => set((state) => {return { camPosY: parseFloat(val) }}),
-  camPosZ: 1000, setCamPosZ: (val) => set((state) => {return { camPosZ: parseFloat(val) }}),
-  camZoom: 10, setCamZoom: (val) => set((state) => {return { camZoom: parseFloat(val) }}),
 }));
 
 const usePOIStore = create((set) => ({

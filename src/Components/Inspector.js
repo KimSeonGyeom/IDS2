@@ -6,7 +6,7 @@ import { Slider } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import MuiInput from '@mui/material/Input';
 import { styled } from '@mui/material/styles';
-import { useCanvasStore, usePOIStore } from '../BasicElements/Store';
+import { usePOIStore } from '../BasicElements/Store';
 import Button from '@mui/material/Button';
 
 const Input = styled(MuiInput)`
@@ -29,123 +29,109 @@ const zoomInputProps = {
   'aria-labelledby': 'input-slider',
 }
 
-function CamPosX() {
-  const [camPosX, setCamPosX] = useCanvasStore((state) => [
-      state.camPosX, state.setCamPosX
-    ], shallow
-  );
+// function CamPosX() {
 
-  return (
-    <>
-      camPosX: &nbsp;
-      <Input value={camPosX} size="small" inputProps={posInputProps}
-        onChange={(e) => { 
-          if(e.target.value == camPosX){
-            return;
-          }else{
-            setCamPosX(e.target.value); 
-          }
-        }}
-      />&nbsp;&nbsp;&nbsp;&nbsp;
-      <Slider
-        value={parseFloat(camPosX)} min={0} max={2000} step={10} aria-labelledby="input-slider"
-        onChange={(e) => { setCamPosX(e.target.value); }}
-      />
-    </>
-  )
-}
+//   return (
+//     <>
+//       camPosX: &nbsp;
+//       <Input value={camPosX} size="small" inputProps={posInputProps}
+//         onChange={(e) => { 
+//           if(e.target.value == camPosX){
+//             return;
+//           }else{
+//             setCamPosX(e.target.value); 
+//           }
+//         }}
+//       />&nbsp;&nbsp;&nbsp;&nbsp;
+//       <Slider
+//         value={parseFloat(camPosX)} min={0} max={2000} step={10} aria-labelledby="input-slider"
+//         onChange={(e) => { setCamPosX(e.target.value); }}
+//       />
+//     </>
+//   )
+// }
 
-function CamPosY() {
-  const [camPosY, setCamPosY] = useCanvasStore((state) => [
-      state.camPosY, state.setCamPosY
-    ], shallow
-  );
+// function CamPosY() {
 
-  return (
-    <>
-      camPosY: &nbsp;
-      <Input value={camPosY} size="small" inputProps={posInputProps}
-        onChange={(e) => { 
-          if(e.target.value == camPosY){
-            return;
-          }else{
-            setCamPosY(e.target.value); 
-          }
-        }}
-      />&nbsp;&nbsp;&nbsp;&nbsp;
-      <Slider
-        value={parseFloat(camPosY)} min={0} max={2000} step={10} aria-labelledby="input-slider"
-        onChange={(e) => { setCamPosY(e.target.value); }}
-      />
-    </>
-  )
-}
+//   return (
+//     <>
+//       camPosY: &nbsp;
+//       <Input value={camPosY} size="small" inputProps={posInputProps}
+//         onChange={(e) => { 
+//           if(e.target.value == camPosY){
+//             return;
+//           }else{
+//             setCamPosY(e.target.value); 
+//           }
+//         }}
+//       />&nbsp;&nbsp;&nbsp;&nbsp;
+//       <Slider
+//         value={parseFloat(camPosY)} min={0} max={2000} step={10} aria-labelledby="input-slider"
+//         onChange={(e) => { setCamPosY(e.target.value); }}
+//       />
+//     </>
+//   )
+// }
 
-function CamPosZ() {
-  const [camPosZ, setCamPosZ] = useCanvasStore((state) => [
-      state.camPosZ, state.setCamPosZ
-    ], shallow
-  );
+// function CamPosZ() {
 
-  return (
-    <>
-      camPosZ: &nbsp;
-      <Input value={camPosZ} size="small" inputProps={posInputProps}
-        onChange={(e) => { 
-          if(e.target.value == camPosZ){
-            return;
-          }else{
-            setCamPosZ(e.target.value); 
-          }
-        }}
-      />&nbsp;&nbsp;&nbsp;&nbsp;
-      <Slider
-        value={parseFloat(camPosZ)} min={0} max={2000} step={10} aria-labelledby="input-slider"
-        onChange={(e) => { setCamPosZ(e.target.value); }}
-      />
-    </>
-  )
-}
+//   return (
+//     <>
+//       camPosZ: &nbsp;
+//       <Input value={camPosZ} size="small" inputProps={posInputProps}
+//         onChange={(e) => { 
+//           if(e.target.value == camPosZ){
+//             return;
+//           }else{
+//             setCamPosZ(e.target.value); 
+//           }
+//         }}
+//       />&nbsp;&nbsp;&nbsp;&nbsp;
+//       <Slider
+//         value={parseFloat(camPosZ)} min={0} max={2000} step={10} aria-labelledby="input-slider"
+//         onChange={(e) => { setCamPosZ(e.target.value); }}
+//       />
+//     </>
+//   )
+// }
 
-function CamZoom() {
-  const [camZoom, setCamZoom] = useCanvasStore((state) => [
-    state.camZoom, state.setCamZoom
-  ], shallow
-);
+// function CamZoom() {
 
-return (
-  <>
-    camZoom: &nbsp;
-    <Input value={camZoom} size="small" inputProps={zoomInputProps}
-      onChange={(e) => { 
-        if(e.target.value == camZoom){
-          return;
-        }else{
-          setCamZoom(e.target.value); 
-        }
-      }}
-    />&nbsp;&nbsp;&nbsp;&nbsp;
-    <Slider
-      value={parseFloat(camZoom)} min={1} max={200} step={1} aria-labelledby="input-slider"
-      onChange={(e) => { setCamZoom(e.target.value); }}
-    />
-  </>
-)
-}
+//   return (
+//     <>
+//       camZoom: &nbsp;
+//       <Input value={camZoom} size="small" inputProps={zoomInputProps}
+//         onChange={(e) => { 
+//           if(e.target.value == camZoom){
+//             return;
+//           }else{
+//             setCamZoom(e.target.value); 
+//           }
+//         }}
+//       />&nbsp;&nbsp;&nbsp;&nbsp;
+//       <Slider
+//         value={parseFloat(camZoom)} min={1} max={200} step={1} aria-labelledby="input-slider"
+//         onChange={(e) => { setCamZoom(e.target.value); }}
+//       />
+//     </>
+//   )
+// }
 
 function InsCamera() {
 
   return (
     <>
       <b>Camera</b><br/>
-      <CamPosX />
-      <br/>
-      <CamPosY />
-      <br/>
-      <CamPosZ />
-      <br/>
-      <CamZoom />
-      <br/>
+      {
+        // <CamPosX />
+        // <br/>
+        // <CamPosY />
+        // <br/>
+        // <CamPosZ />
+        // <br/>
+        // <CamZoom />
+        // <br/>
+      }
     </>
   )
 }

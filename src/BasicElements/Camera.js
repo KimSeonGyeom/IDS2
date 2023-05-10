@@ -1,34 +1,15 @@
 import * as THREE from 'three'
 import React, { useRef } from 'react'
-import { shallow } from 'zustand/shallow'
+
 import { useThree, useFrame } from '@react-three/fiber'
 import { OrbitControls, OrthographicCamera } from '@react-three/drei';
-import { useCanvasStore, useClipStore } from './Store';
-import { scrollLength } from './Constants';
+import { useClipStore } from './Store';
 
 const OrthoCamera = React.forwardRef((props, ref) => {
-  const mainCamera = useRef();
-  const controls = useRef();
-
-  const [animation] = useClipStore((state) => [state.animation], shallow);
-  const [progressVal] = useCanvasStore((state) => [state.progressVal], shallow);
-
-  // const { gl } = useThree();
-  useFrame(() => {
-    console.log(progressVal);
-    mainCamera.current.position.x = animation[progressVal].camX;
-    mainCamera.current.position.y = animation[progressVal].camY;
-    mainCamera.current.position.z = animation[progressVal].camZ;
-    mainCamera.current.zoom = animation[progressVal].camZoom;
-    // console.log(gl.info.render)
-  })
-
   return(
     <>
-      <OrthographicCamera ref={mainCamera} makeDefault near={0} far={10000} />
+      <OrthographicCamera ref={ref} makeDefault near={0} far={10000} />
       <OrbitControls
-        ref={controls}
-        camera={ref.current}
         enablePan={true}
         enableZoom={false}
         enableRotate={true}

@@ -1,17 +1,21 @@
 import * as THREE from 'three'
 import React, { useRef, useEffect, useLayoutEffect, useState, useMemo } from 'react'
+import { useFrame, useThree } from '@react-three/fiber'
+
+
 // import { Canvas, useThree, useFrame, extend, useLoader } from '@react-three/fiber'
 // import { OrbitControls, OrthographicCamera, PerspectiveCamera } from '@react-three/drei';
 // import { Line as DreiLine } from '@react-three/drei';
 // import fonts from "./Fonts";
 import { total_data } from './Constants';
-import { useStore } from './Store';
+import { usePOIStore } from './Store';
 
 function Heatmap(){
   const ref = useRef();
+  const { gl } = useThree();
   const temp = new THREE.Object3D()
 
-  const pointOfInterest = useStore((state) => state.pointOfInterest);
+  const pointOfInterest = usePOIStore((state) => state.pointOfInterest);
 
   const size = 0.1; //size of one box
   const height = 20; //scale of value
@@ -62,17 +66,24 @@ function Heatmap(){
 
       ref.current.setColorAt(i, colorMap(y));
       if(pointOfInterest.length != 0){
-        if(
-          (pointOfInterest[0].x == null || pointOfInterest[0].x == x) && 
-          (pointOfInterest[0].y == null || Math.abs(pointOfInterest[0].y - y) < 0.01) && 
-          (pointOfInterest[0].z == null || pointOfInterest[0].z == z)
-        ){
-          ref.current.setColorAt(i, new THREE.Color("#000000"))
+        for(let j=0; j < pointOfInterest.length; j++){
+          if(
+            (pointOfInterest[j].x == null || pointOfInterest[j].x == x) && 
+            (pointOfInterest[j].y == null || Math.abs(pointOfInterest[j].y - y) < 0.01) && 
+            (pointOfInterest[j].z == null || pointOfInterest[j].z == z)
+          ){
+            ref.current.setColorAt(i, new THREE.Color("#000000"))
+          }
         }
       }
     } 
     ref.current.instanceColor.needsUpdate = true
+    console.log()
   }, [pointOfInterest.length])
+
+  useEffect(() => {
+    console.log(gl.info.render);
+  }, [gl.info.render])
 
   return (
     <instancedMesh ref={ref} args={[null, null, total_data.length]}>

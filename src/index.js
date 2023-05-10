@@ -1,10 +1,32 @@
-import React, { Suspense } from 'react';
+import React, { useLayoutEffect, Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import Canvas from './Components/Canvas';
+import THREECanvas from './Components/Canvas';
 import Inspector from './Components/Inspector';
 import Animator from './Components/Animator';
 // import reportWebVitals from './reportWebVitals';
+
+import { scrollLength } from './BasicElements/Constants'
+
+import { useCanvasStore } from './BasicElements/Store';
+
+function CanvasBox() {
+  const setProgressVal = useCanvasStore((state) => state.setProgressVal);
+
+  useLayoutEffect(() => {
+    document.getElementById("dummy").style.height = scrollLength + "px";
+  }, []);
+
+  return(
+    <div id={"scroller"} onScroll={() => setProgressVal(100 * document.getElementById("scroller").scrollTop / scrollLength)}>
+      <div id={"canvas"}>
+        <THREECanvas frameloop="demand" />
+      </div>
+      <div id={"dummy"}> . </div>
+    </div>
+  )
+}
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -13,7 +35,7 @@ root.render(
       <div className="upper-container">
         <div className="canvas-parent box">
           <Suspense fallback={<div>Now Loading</div>}>
-            <Canvas />
+            <CanvasBox />
           </Suspense>
         </div>
         <div className="inspector box">

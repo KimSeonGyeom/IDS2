@@ -1,26 +1,35 @@
 import * as THREE from 'three'
 import React, { useRef } from 'react'
+import { shallow } from 'zustand/shallow'
 import { useThree, useFrame } from '@react-three/fiber'
 import { OrbitControls, OrthographicCamera } from '@react-three/drei';
-import { useStore } from './Store';
+import { useCanvasStore, useClipStore } from './Store';
+import { scrollLength } from './Constants';
 
 const OrthoCamera = React.forwardRef((props, ref) => {
   const mainCamera = useRef();
   const controls = useRef();
 
-  const camPos = useStore((state) => state.camPos);
-  const setCamPos = useStore((state) => state.setCamPos);
-  const camZoom = useStore((state) => state.camZoom);
-  const setCamZoom = useStore((state) => state.setCamZoom);
+  const [animation] = useClipStore((state) => [state.animation], shallow);
+  const [progressVal] = useCanvasStore((state) => [state.progressVal], shallow);
+
+  // const [progressVal, camPosX, camPosY, camPosZ, camZoom] = useCanvasStore(
+  //   (state) => [ state.progressVal, state.camPosX, state.camPosY, state.camPosZ, state.camZoom ], 
+  //   shallow 
+  // );
+
+  // const { gl } = useThree();
+  useFrame(() => {
+    mainCamera.current.position.x = animation[(scrollLength * progressVal / 100).toFixed()].camX;
+    mainCamera.current.position.y = animation[(scrollLength * progressVal / 100).toFixed()].camY;
+    mainCamera.current.position.z = animation[(scrollLength * progressVal / 100).toFixed()].camZ;
+    mainCamera.current.zoom = animation[(scrollLength * progressVal / 100).toFixed()].camZoom;
+    // console.log(gl.info.render)
+  })
 
   return(
     <>
-      <OrthographicCamera ref={mainCamera} makeDefault
-        position={camPos}
-        zoom={camZoom}
-        near={0}
-        far={10000}
-        />
+      <OrthographicCamera ref={mainCamera} makeDefault near={0} far={10000} />
       <OrbitControls
         ref={controls}
         camera={ref.current}

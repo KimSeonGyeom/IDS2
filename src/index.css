@@ -8,25 +8,22 @@ body, html, #root {
 }
 
 #canvas {
-  width: 1000px;
-  height: calc(100% - 2px);
+  width: 100%;
+  height: 100%;
   position: sticky;
   top: 0;
-  display: inline-block;
-  border: 1px solid;
 }
 
 .canvas-parent {
-  width: calc(100% - 400px);
+  width: calc(100% - 600px);
   height: 100%;
 }
 
-#canvasContainer {
+#scroller {
   height: 100%;
   width: 100%;
   overflow-y: scroll;
   z-index: 10;
-  text-align: center;
 }
 
 .box {
@@ -55,11 +52,11 @@ body, html, #root {
 }
 
 .inspector {
-  width: 400px;
+  width: 600px;
 }
 
 /* slider width */
 .css-187mznn-MuiSlider-root {
-  width: calc(100% - 400px) !important;
+  width: calc(100% - 600px) !important;
   min-width: 100px;
 }

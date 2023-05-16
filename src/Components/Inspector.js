@@ -2,16 +2,26 @@ import * as THREE from 'three'
 import React, { useRef, useFrame, useLayoutEffect, useMemo } from 'react'
 import { shallow } from 'zustand/shallow'
 
-import { Slider } from '@mui/material';
+import { Slider, Button } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import MuiInput from '@mui/material/Input';
 import { styled } from '@mui/material/styles';
-import { usePOIStore } from '../BasicElements/Store';
-import Button from '@mui/material/Button';
+import { useCanvasStore, useClipStore, usePOIStore } from '../BasicElements/Store';
 
 const Input = styled(MuiInput)`
   width: 64px;
+  margin: 6px 0px;
 `;
+
+const MyButton = styled(Button)`
+  margin: 10px 0px;
+`
+
+const MySlider = styled(Slider)`
+  margin: 0px 30px;
+  width: 200px;
+  padding: 0px;
+`
 
 const posInputProps = {
   step: 10,
@@ -29,109 +39,156 @@ const zoomInputProps = {
   'aria-labelledby': 'input-slider',
 }
 
-// function CamPosX() {
-
-//   return (
-//     <>
-//       camPosX: &nbsp;
-//       <Input value={camPosX} size="small" inputProps={posInputProps}
-//         onChange={(e) => { 
-//           if(e.target.value == camPosX){
-//             return;
-//           }else{
-//             setCamPosX(e.target.value); 
-//           }
-//         }}
-//       />&nbsp;&nbsp;&nbsp;&nbsp;
-//       <Slider
-//         value={parseFloat(camPosX)} min={0} max={2000} step={10} aria-labelledby="input-slider"
-//         onChange={(e) => { setCamPosX(e.target.value); }}
-//       />
-//     </>
-//   )
-// }
-
-// function CamPosY() {
-
-//   return (
-//     <>
-//       camPosY: &nbsp;
-//       <Input value={camPosY} size="small" inputProps={posInputProps}
-//         onChange={(e) => { 
-//           if(e.target.value == camPosY){
-//             return;
-//           }else{
-//             setCamPosY(e.target.value); 
-//           }
-//         }}
-//       />&nbsp;&nbsp;&nbsp;&nbsp;
-//       <Slider
-//         value={parseFloat(camPosY)} min={0} max={2000} step={10} aria-labelledby="input-slider"
-//         onChange={(e) => { setCamPosY(e.target.value); }}
-//       />
-//     </>
-//   )
-// }
-
-// function CamPosZ() {
-
-//   return (
-//     <>
-//       camPosZ: &nbsp;
-//       <Input value={camPosZ} size="small" inputProps={posInputProps}
-//         onChange={(e) => { 
-//           if(e.target.value == camPosZ){
-//             return;
-//           }else{
-//             setCamPosZ(e.target.value); 
-//           }
-//         }}
-//       />&nbsp;&nbsp;&nbsp;&nbsp;
-//       <Slider
-//         value={parseFloat(camPosZ)} min={0} max={2000} step={10} aria-labelledby="input-slider"
-//         onChange={(e) => { setCamPosZ(e.target.value); }}
-//       />
-//     </>
-//   )
-// }
-
-// function CamZoom() {
-
-//   return (
-//     <>
-//       camZoom: &nbsp;
-//       <Input value={camZoom} size="small" inputProps={zoomInputProps}
-//         onChange={(e) => { 
-//           if(e.target.value == camZoom){
-//             return;
-//           }else{
-//             setCamZoom(e.target.value); 
-//           }
-//         }}
-//       />&nbsp;&nbsp;&nbsp;&nbsp;
-//       <Slider
-//         value={parseFloat(camZoom)} min={1} max={200} step={1} aria-labelledby="input-slider"
-//         onChange={(e) => { setCamZoom(e.target.value); }}
-//       />
-//     </>
-//   )
-// }
-
-function InsCamera() {
+function CamPosX() {
+  const [animation] = useClipStore((state) => [state.animation], shallow);
+  const [progressVal] = useCanvasStore((state) => [state.progressVal], shallow);
 
   return (
     <>
-      <b>Camera</b><br/>
+      camPosX: &nbsp;
+      <Input value={animation[progressVal].camX} size="small" inputProps={posInputProps}
+        // onChange={(e) => { 
+        //   if(e.target.value == camPosX){
+        //     return;
+        //   }else{
+            // setCamPosX(e.target.value); 
+          // }
+        // }}
+      />
+      <MySlider
+        value={parseFloat(animation[progressVal].camX)} min={0} max={2000} step={10} aria-labelledby="input-slider"
+        // onChange={(e) => { setCamPosX(e.target.value); }}
+      />
+    </>
+  )
+}
+
+function CamPosY() {
+  const [animation] = useClipStore((state) => [state.animation], shallow);
+  const [progressVal] = useCanvasStore((state) => [state.progressVal], shallow);
+
+  return (
+    <>
+      camPosY: &nbsp;
+      <Input value={animation[progressVal].camY} size="small" inputProps={posInputProps}
+        // onChange={(e) => { 
+        //   if(e.target.value == camPosY){
+        //     return;
+        //   }else{
+            // setCamPosY(e.target.value); 
+          // }
+        // }}
+      />
+      <MySlider
+        value={parseFloat(animation[progressVal].camY)} min={0} max={2000} step={10} aria-labelledby="input-slider"
+        // onChange={(e) => { setCamPosY(e.target.value); }}
+      />
+    </>
+  )
+}
+
+function CamPosZ() {
+  const [animation] = useClipStore((state) => [state.animation], shallow);
+  const [progressVal] = useCanvasStore((state) => [state.progressVal], shallow);
+
+  return (
+    <>
+      camPosZ: &nbsp;
+      <Input value={animation[progressVal].camZ} size="small" inputProps={posInputProps}
+        // onChange={(e) => { 
+        //   if(e.target.value == camPosZ){
+        //     return;
+        //   }else{
+            // setCamPosZ(e.target.value); 
+          // }
+        // }}
+      />
+      <MySlider
+        value={parseFloat(animation[progressVal].camZ)} min={-1000} max={1000} step={10} aria-labelledby="input-slider"
+        // onChange={(e) => { setCamPosZ(e.target.value); }}
+      />
+    </>
+  )
+}
+
+function CamZoom() {
+  const [animation] = useClipStore((state) => [state.animation], shallow);
+  const [progressVal] = useCanvasStore((state) => [state.progressVal], shallow);
+
+  return (
+    <>
+      camZoom: &nbsp;
+      <Input value={animation[progressVal].camZoom} size="small" inputProps={zoomInputProps}
+        // onChange={(e) => { 
+        //   if(e.target.value == camZoom){
+        //     return;
+        //   }else{
+            // setCamZoom(e.target.value); 
+          // }
+        // }}
+      />
+      <MySlider
+        value={parseFloat(animation[progressVal].camZoom)} min={1} max={200} step={1} aria-labelledby="input-slider"
+        // onChange={(e) => { setCamZoom(e.target.value); }}
+      />
+    </>
+  )
+}
+
+function InsCamera() {
+  const [getAnimation, animation, cam] = useClipStore((state) => [state.getAnimation, state.animation, state.cam], shallow);
+
+  const columns = [
+    { field: 'id', headerName: 'ID', width: 30 },
+    { field: 'progress', headerName: 'Prgs', type: 'number', width: 80 },
+    { field: 'camX', headerName: 'X', type: 'number', width: 80 },
+    { field: 'camY', headerName: 'Y', type: 'number', width: 80, },
+    { field: 'camZ', headerName: 'Z', type: 'number', width: 80, },
+    { field: 'camZoom', headerName: 'Zoom', type: 'number', width: 80, },
+  ];
+
+
+  return (
+    <>
+      <b>Clip</b><br/>
       {
-        // <CamPosX />
-        // <br/>
-        // <CamPosY />
-        // <br/>
-        // <CamPosZ />
-        // <br/>
-        // <CamZoom />
-        // <br/>
+        <>
+          <CamPosX />
+          <br/>
+          <CamPosY />
+          <br/>
+          <CamPosZ />
+          <br/>
+          <CamZoom />
+          <br/>
+        </>
       }
+      <MyButton 
+        size="small" variant="contained" 
+        onClick={() => {
+          getAnimation();
+          console.log(animation, cam)
+        }}
+      >
+        Add Clip
+      </MyButton>
+      <div style={{ height: 'fit-content', width: '100%', margin: '10px 0px' }}>
+        <DataGrid
+          density='compact'
+          rows={cam}
+          columns={columns}
+          pageSizeOptions={[5, 5]}
+          checkboxSelection
+          hideFooter={true}
+          onRowSelectionModelChange={(ids) => {
+            // const selectedIDs = new Set(ids);
+            // const selectedRowData = rowsOfInterest.filter((row) =>
+            //   selectedIDs.has(row.id)
+            // );
+            // setPointOfInterest(selectedRowData);
+          }}
+        />
+      </div>
     </>
   )
 }
@@ -182,7 +239,7 @@ function InsPoI() {
       <Input id="poiInput-1" size="small" value={value1} inputProps={XInputProps} 
         onChange={(e) => setValue1(e.target.value === '' ? '' : Number(e.target.value))}
       />
-      <Slider value={typeof value1 === 'number' ? value1 : 0} min={XInputProps.min} max={XInputProps.max} step={1} 
+      <MySlider value={typeof value1 === 'number' ? value1 : 0} min={XInputProps.min} max={XInputProps.max} step={1} 
         aria-labelledby="input-slider" onChange={(e, newValue) => { setValue1(newValue); }}
       /><br/>
     
@@ -190,7 +247,7 @@ function InsPoI() {
       <Input id="poiInput-2" size="small" value={value2} inputProps={YInputProps} 
         onChange={(e) => setValue2(e.target.value === '' ? '' : Number(e.target.value))}
       />
-      <Slider value={typeof value2 === 'number' ? value2 : 0} min={YInputProps.min} max={YInputProps.max} step={0.01} 
+      <MySlider value={typeof value2 === 'number' ? value2 : 0} min={YInputProps.min} max={YInputProps.max} step={0.01} 
         aria-labelledby="input-slider" onChange={(e, newValue) => { setValue2(newValue); }}
       /><br/>
     
@@ -198,10 +255,10 @@ function InsPoI() {
       <Input id="poiInput-3" size="small" value={value3} inputProps={ZInputProps} 
         onChange={(e) => setValue3(e.target.value === '' ? '' : Number(e.target.value))}
       />
-      <Slider value={typeof value3 === 'number' ? value3 : 0} min={ZInputProps.min} max={ZInputProps.max} step={1} 
+      <MySlider value={typeof value3 === 'number' ? value3 : 0} min={ZInputProps.min} max={ZInputProps.max} step={1} 
         aria-labelledby="input-slider" onChange={(e, newValue) => { setValue3(newValue); }}
       /><br/>
-      <Button 
+      <MyButton 
         size="small" variant="contained" 
         onClick={() => {
           let [x, y, z] = [
@@ -225,8 +282,8 @@ function InsPoI() {
         }}
       >
         Add
-      </Button><br/><br/>
-      <div style={{ height: 'fit-content', width: '100%' }}>
+      </MyButton>
+      <div style={{ height: 'fit-content', width: '100%', margin: '10px 0px' }}>
         <DataGrid
           density='compact'
           rows={rowsOfInterest}
@@ -253,7 +310,7 @@ function Inspector() {
   return (
     <div>
       <InsCamera/>
-      <br/>
+      <br/><br/><br/>
       <InsPoI/>
     </div>
   );

@@ -13,7 +13,7 @@ const animationGenerator = (clips) =>{
   let clipIdx = 0;
   let clip0, clip1;
   let interpParam = 0;
-  for(let i=0; i<scrollLength; i++){
+  for(let i=0; i<scrollLength ; i++){
     animation.push({})
     clipIdx = clips.findIndex((e) => e.progress > i * 100 / scrollLength);
     clip0 = clips[clipIdx - 1];
@@ -25,9 +25,18 @@ const animationGenerator = (clips) =>{
       animation[i][key] = clip1[key] * interpParam + clip0[key] * (1 - interpParam)
     })
   }
+  animation.push({});
+  Object.keys(clip1).forEach((key) =>{
+    animation[scrollLength][key] = clip1[key]
+  })
   console.log(animation);
   return animation;
 }
+
+const useCanvasStore = create((set) => ({
+  progressVal: 0,
+  setProgressVal: (val) => set((state) => {return { progressVal: val }}),
+}))
 
 const usePOIStore = create((set) => ({
   // x: 1816 - 2019
@@ -58,6 +67,7 @@ const useClipStore = create((set) => ({
   }),
   cam: [
     {
+      "id": 0,
       "progress": 0,
       "camX": 1000,
       "camY": 1000,
@@ -65,6 +75,7 @@ const useClipStore = create((set) => ({
       "camZoom": 10,
     },
     {
+      "id": 1,
       "progress": 40,
       "camX": 500,
       "camY": 1000,
@@ -72,6 +83,7 @@ const useClipStore = create((set) => ({
       "camZoom": 10,
     },
     {
+      "id": 2,
       "progress": 100,
       "camX": 1000,
       "camY": 900,
@@ -83,4 +95,4 @@ const useClipStore = create((set) => ({
   getAnimation: () => set((state) => {return {animation: animationGenerator(state.cam)}}),
 }));
 
-export { usePOIStore, useClipStore };
+export { toFixed2, useCanvasStore, usePOIStore, useClipStore };

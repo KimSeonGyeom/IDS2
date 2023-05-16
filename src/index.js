@@ -9,7 +9,9 @@ import Inspector from './Components/Inspector';
 import Animator from './Components/Animator';
 // import reportWebVitals from './reportWebVitals';
 
-import { useClipStore } from './BasicElements/Store';
+import { useCanvasStore, useClipStore } from './BasicElements/Store';
+import { scrollLength } from './BasicElements/Constants';
+
 
 const Overlay = forwardRef(({ caption, scroll }, ref) => (
   <div
@@ -40,24 +42,41 @@ const Overlay = forwardRef(({ caption, scroll }, ref) => (
 ))
 
 function CanvasBox() {
-  const overlay = useRef();
-  const caption = useRef();
-  const scroll = useRef(0);
+  // const overlay = useRef();
+  // const scroll = useRef(0);
 
   const [getAnimation] = useClipStore((state) => [state.getAnimation], shallow);
+  const [setProgressVal] = useCanvasStore((state) => [state.setProgressVal], shallow);
+
+  const requestRef = React.useRef();
+  const previousTimeRef = React.useRef();
+
+  const animate = time => {
+    if (previousTimeRef.current != undefined) {
+      setProgressVal(Math.floor(document.getElementById("scroller").scrollTop));
+    }
+    previousTimeRef.current = time;
+    requestRef.current = requestAnimationFrame(animate);
+  }
 
   useLayoutEffect(() => {
     getAnimation();
+
+    document.getElementById("dummy").style.height = scrollLength + "px";
+    requestRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(requestRef.current);
   }, []);
 
   return(
-    <div id={"canvasContainer"}>
+    <div id={"scroller"}>
       <div id={"canvas"}>
-        <Canvas>
-          <THREECanvas scroll={scroll} frameloop="demand" />
-        </Canvas>
-        <Overlay ref={overlay} caption={caption} scroll={scroll} />
+        <Suspense fallback={<div>Now Loading</div>}>
+          <Canvas>
+            <THREECanvas frameloop="demand" />
+          </Canvas>
+        </Suspense>
       </div>
+      <div id={"dummy"}> . </div>
     </div>
   )
 }
@@ -85,8 +104,3 @@ root.render(
     </div>
   </React.StrictMode>
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-// reportWebVitals();

@@ -1,20 +1,41 @@
 import * as THREE from 'three'
 import React, { useRef } from 'react'
+import { shallow } from 'zustand/shallow'
 
 import { useThree, useFrame } from '@react-three/fiber'
 import { OrbitControls, OrthographicCamera } from '@react-three/drei';
-import { useClipStore } from './Store';
+import { useCanvasStore, useClipStore } from './Store';
 
 const OrthoCamera = React.forwardRef((props, ref) => {
+  const mainCamera = useRef();
+
+  const [animation] = useClipStore((state) => [state.animation], shallow);
+  const [progressVal] = useCanvasStore((state) => [state.progressVal], shallow);
+
+  useFrame(() => {
+    let animation_camera = animation[progressVal]
+    mainCamera.current.position.set(
+      animation_camera.camX,
+      animation_camera.camY,
+      animation_camera.camZ,
+    );
+    mainCamera.current.zoom = animation_camera.camZoom;
+    mainCamera.current.lookAt(0, 0, 0);
+    mainCamera.current.updateProjectionMatrix();
+    // console.log(gl.info.render)
+  });
+
   return(
     <>
-      <OrthographicCamera ref={ref} makeDefault near={0} far={10000} />
-      <OrbitControls
-        enablePan={true}
-        enableZoom={false}
-        enableRotate={true}
-        zoomSpeed={0.25}
-        style={{zIndex: 5}} />
+      <OrthographicCamera ref={mainCamera} makeDefault near={0} far={10000} />
+      {
+        // <OrbitControls
+        //   enablePan={true}
+        //   enableZoom={false}
+        //   enableRotate={true}
+        //   zoomSpeed={0.25}
+        //   style={{zIndex: 5}} />
+      }
     </>
   );
 });

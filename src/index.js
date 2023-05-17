@@ -45,8 +45,13 @@ function CanvasBox() {
   // const overlay = useRef();
   // const scroll = useRef(0);
 
-  const [getAnimation] = useClipStore((state) => [state.getAnimation], shallow);
-  const [mode, setProgressVal] = useCanvasStore((state) => [state.mode, state.setProgressVal], shallow);
+  const [animation, getAnimation] = useClipStore((state) => [
+    state.animation, state.getAnimation
+  ], shallow);
+  const [mode, progressVal, setProgressVal] = useCanvasStore((state) => [
+    state.mode, state.progressVal, state.setProgressVal
+  ], shallow);
+  const [ setSpec ] = useCanvasStore((state) => [state.setSpec], shallow);
 
   const requestRef = React.useRef();
   const previousTimeRef = React.useRef();
@@ -68,7 +73,16 @@ function CanvasBox() {
   }, []);
 
   return(
-    <div id={"scroller"} style={{overflow: mode==MODE_PLAY_SCROLLY? 'scroll':'hidden'}}>
+    <div id={"scroller"} 
+      style={{overflow: mode==MODE_PLAY_SCROLLY? 'scroll':'hidden'}}
+      onScrollEnd={() => {
+        let animation_camera = animation[progressVal]
+        setSpec('camX', animation_camera.camX);
+        setSpec('camY', animation_camera.camY);
+        setSpec('camZ', animation_camera.camZ);
+        // lookAt
+        setSpec('zoom', animation_camera.camZoom);
+      }}>
       <div id={"canvas"}>
         <Suspense fallback={<div>Now Loading</div>}>
           <Canvas>

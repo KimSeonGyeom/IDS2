@@ -13,11 +13,6 @@ function Animator() {
 
   return (
     <div>
-      <div>
-        {
-          // Number.parseFloat(target / scrollLength * 100).toFixed(2)
-        }
-      </div><br/>
       <Slider 
         id={"progressSlider"}
         min={0} max={100} step={0.1} value={toFixed2(100 * progressVal / scrollLength)} 

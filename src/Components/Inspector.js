@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import React, { useRef, useFrame, useLayoutEffect, useMemo } from 'react'
+import React, { useRef, useFrame, useLayoutEffect, useMemo, useCallback } from 'react'
 import { useThree } from '@react-three/fiber'
 import { shallow } from 'zustand/shallow'
 
@@ -8,6 +8,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import MuiInput from '@mui/material/Input';
 import { styled } from '@mui/material/styles';
 import { MODE_EDIT_CAMERA, MODE_PLAY_SCROLLY, useCanvasStore, useClipStore, usePOIStore } from '../BasicElements/Store';
+import { scrollLength } from '../BasicElements/Constants';
 
 const Input = styled(MuiInput)`
   width: 64px;
@@ -42,19 +43,21 @@ const zoomInputProps = {
 
 function CamPosX() {
   const [animation] = useClipStore((state) => [state.animation], shallow);
-  const [mode, progressVal, camX, setCamX] = useCanvasStore((state) => [state.mode, state.progressVal, state.camX, state.setCamX], shallow);
+  const [mode, progressVal, spec, setSpec] = useCanvasStore((state) => [
+    state.mode, state.progressVal, state.spec, state.setSpec
+  ], shallow);
 
   return (
     <>
       camPosX: &nbsp;
-      <Input value={mode == MODE_PLAY_SCROLLY? animation[progressVal].camX : mode == MODE_EDIT_CAMERA? camX : 1000} 
+      <Input value={mode == MODE_PLAY_SCROLLY? animation[progressVal].camX : mode == MODE_EDIT_CAMERA? spec.camX : 1000} 
         size="small" inputProps={posInputProps}
-        onChange={(e) => { if(mode == MODE_EDIT_CAMERA){ setCamX(e.target.value); } }}
+        onChange={(e) => { if(mode == MODE_EDIT_CAMERA){ setSpec('camX', e.target.value); } }}
       />
       <MySlider
-        value={mode == MODE_PLAY_SCROLLY? animation[progressVal].camX : mode == MODE_EDIT_CAMERA? camX : 1000} 
+        value={mode == MODE_PLAY_SCROLLY? animation[progressVal].camX : mode == MODE_EDIT_CAMERA? spec.camX : 1000} 
         min={0} max={2000} step={10} aria-labelledby="input-slider"
-        onChange={(e) => { if(mode == MODE_EDIT_CAMERA){ setCamX(e.target.value); } }}
+        onChange={(e) => { if(mode == MODE_EDIT_CAMERA){ setSpec('camX', e.target.value); } }}
       />
     </>
   )
@@ -62,20 +65,22 @@ function CamPosX() {
 
 function CamPosY() {
   const [animation] = useClipStore((state) => [state.animation], shallow);
-  const [mode, progressVal, camY, setCamY] = useCanvasStore((state) => [state.mode, state.progressVal, state.camY, state.setCamY], shallow);
+  const [mode, progressVal, spec, setSpec] = useCanvasStore((state) => [
+    state.mode, state.progressVal, state.spec, state.setSpec
+  ], shallow);
 
   return (
     <>
       camPosY: &nbsp;
       <Input 
-        value={mode == MODE_PLAY_SCROLLY? animation[progressVal].camY : mode == MODE_EDIT_CAMERA? camY : 1000} 
+        value={mode == MODE_PLAY_SCROLLY? animation[progressVal].camY : mode == MODE_EDIT_CAMERA? spec.camY : 1000} 
         size="small" inputProps={posInputProps}
-        onChange={(e) => { if(mode == MODE_EDIT_CAMERA){ setCamY(e.target.value); } }}
+        onChange={(e) => { if(mode == MODE_EDIT_CAMERA){ setSpec('camY', e.target.value); } }}
       />
       <MySlider
-        value={parseFloat(mode == MODE_PLAY_SCROLLY? animation[progressVal].camY : mode == MODE_EDIT_CAMERA? camY : 1000)} 
+        value={mode == MODE_PLAY_SCROLLY? animation[progressVal].camY : mode == MODE_EDIT_CAMERA? spec.camY : 1000} 
         min={0} max={2000} step={10} aria-labelledby="input-slider"
-        onChange={(e) => { if(mode == MODE_EDIT_CAMERA){ setCamY(e.target.value); } }}
+        onChange={(e) => { if(mode == MODE_EDIT_CAMERA){ setSpec('camY', e.target.value); } }}
       />
     </>
   )
@@ -83,20 +88,22 @@ function CamPosY() {
 
 function CamPosZ() {
   const [animation] = useClipStore((state) => [state.animation], shallow);
-  const [mode, progressVal, camZ, setCamZ] = useCanvasStore((state) => [state.mode, state.progressVal, state.camZ, state.setCamZ], shallow);
+  const [mode, progressVal, spec, setSpec] = useCanvasStore((state) => [
+    state.mode, state.progressVal, state.spec, state.setSpec
+  ], shallow);
 
   return (
     <>
       camPosZ: &nbsp;
       <Input 
-        value={mode == MODE_PLAY_SCROLLY? animation[progressVal].camZ : mode == MODE_EDIT_CAMERA? camZ : 0} 
+        value={mode == MODE_PLAY_SCROLLY? animation[progressVal].camZ : mode == MODE_EDIT_CAMERA? spec.camZ : 0} 
         size="small" inputProps={posInputProps}
-        onChange={(e) => { if(mode == MODE_EDIT_CAMERA){ setCamZ(e.target.value); } }}
+        onChange={(e) => { if(mode == MODE_EDIT_CAMERA){ setSpec('camZ', e.target.value); } }}
       />
       <MySlider
-        value={mode == MODE_PLAY_SCROLLY? animation[progressVal].camZ : mode == MODE_EDIT_CAMERA? camZ : 0} 
+        value={mode == MODE_PLAY_SCROLLY? animation[progressVal].camZ : mode == MODE_EDIT_CAMERA? spec.camZ : 0} 
         min={-1000} max={1000} step={10} aria-labelledby="input-slider"
-        onChange={(e) => { if(mode == MODE_EDIT_CAMERA){ setCamZ(e.target.value); } }}
+        onChange={(e) => { if(mode == MODE_EDIT_CAMERA){ setSpec('camZ', e.target.value); } }}
       />
     </>
   )
@@ -104,37 +111,53 @@ function CamPosZ() {
 
 function CamZoom() {
   const [animation] = useClipStore((state) => [state.animation], shallow);
-  const [mode, progressVal, zoom, setZoom] = useCanvasStore((state) => [state.mode, state.progressVal, state.zoom, state.setZoom], shallow);
+  const [mode, progressVal, spec, setSpec] = useCanvasStore((state) => [
+    state.mode, state.progressVal, state.spec, state.setSpec
+  ], shallow);
 
   return (
     <>
       camZoom: &nbsp;
-      <Input value={mode == MODE_PLAY_SCROLLY? animation[progressVal].camZoom : mode == MODE_EDIT_CAMERA? zoom : 10} 
+      <Input 
+        value={mode == MODE_PLAY_SCROLLY? animation[progressVal].camZoom : mode == MODE_EDIT_CAMERA? spec.zoom : 10} 
         size="small" inputProps={zoomInputProps}
-        onChange={(e) => { if(mode == MODE_EDIT_CAMERA){ setZoom(e.target.value); } }}
+        onChange={(e) => { if(mode == MODE_EDIT_CAMERA){ setSpec('zoom', e.target.value); } }}
       />
       <MySlider
-        value={mode == MODE_PLAY_SCROLLY? animation[progressVal].camZoom : mode == MODE_EDIT_CAMERA? zoom : 10} 
+        value={mode == MODE_PLAY_SCROLLY? animation[progressVal].camZoom : mode == MODE_EDIT_CAMERA? spec.zoom : 10} 
         min={1} max={200} step={1} aria-labelledby="input-slider"
-        onChange={(e) => { if(mode == MODE_EDIT_CAMERA){ setZoom(e.target.value); } }}
+        onChange={(e) => { if(mode == MODE_EDIT_CAMERA){ setSpec('zoom', e.target.value); } }}
       />
     </>
   )
 }
 
 function InsCamera() {
-  const [getAnimation, animation, cam] = useClipStore((state) => [state.getAnimation, state.animation, state.cam], shallow);
-  const [mode, setMode] = useCanvasStore((state) => [state.mode, state.setMode], shallow);
+  const [getAnimation, animation, cam, addCam] = useClipStore((state) => [
+    state.getAnimation, state.animation, state.cam, state.addCam
+  ], shallow);
+  const [mode, setMode, progressVal] = useCanvasStore((state) => [state.mode, state.setMode, state.progressVal], shallow);
+  const [spec] = useCanvasStore((state) => [state.spec], shallow);
 
-  const columns = [
+  const columns = useMemo(() => [
     { field: 'id', headerName: 'ID', width: 30 },
     { field: 'progress', headerName: 'Prgs', type: 'number', width: 80 },
     { field: 'camX', headerName: 'X', type: 'number', width: 80 },
     { field: 'camY', headerName: 'Y', type: 'number', width: 80, },
     { field: 'camZ', headerName: 'Z', type: 'number', width: 80, },
     { field: 'camZoom', headerName: 'Zoom', type: 'number', width: 80, },
-  ];
+  ], []);
 
+  const handleClick = useCallback(() =>{
+    addCam({
+      "progress": progressVal / scrollLength * 100,
+      "camX": spec.camX,
+      "camY": spec.camY,
+      "camZ": spec.camZ,
+      "zoom": spec.zoom,
+    })
+    getAnimation();
+  }, [progressVal, spec])
 
   return (
     <>
@@ -162,53 +185,31 @@ function InsCamera() {
       }
       <MyButton 
         size="small" variant="contained" 
-        onClick={() => {
-          getAnimation();
-          console.log(animation, cam)
-        }}
+        onClick={() => {handleClick();}}
       >
         Add Clip
       </MyButton>
-      <div style={{ height: 'fit-content', width: '100%', margin: '10px 0px' }}>
-        <DataGrid
-          density='compact'
-          rows={cam}
-          columns={columns}
-          pageSizeOptions={[5, 5]}
-          checkboxSelection
-          hideFooter={true}
-          onRowSelectionModelChange={(ids) => {
-            // const selectedIDs = new Set(ids);
-            // const selectedRowData = rowsOfInterest.filter((row) =>
-            //   selectedIDs.has(row.id)
-            // );
-            // setPointOfInterest(selectedRowData);
-          }}
-        />
-      </div>
+      {
+        <div style={{ height: 'fit-content', width: '100%', margin: '10px 0px' }}>
+          <DataGrid
+            density='compact'
+            rows={cam}
+            columns={columns}
+            pageSizeOptions={[5, 5]}
+            checkboxSelection
+            hideFooter={true}
+            onRowSelectionModelChange={(ids) => {
+              // const selectedIDs = new Set(ids);
+              // const selectedRowData = rowsOfInterest.filter((row) =>
+              //   selectedIDs.has(row.id)
+              // );
+              // setPointOfInterest(selectedRowData);
+            }}
+          />
+        </div>
+      }
     </>
   )
-}
-
-const XInputProps = {
-  step: 10,
-  min: 1816,
-  max: 2019,
-  type: 'number',
-}
-
-const YInputProps = {
-  step: 0.01,
-  min: 0,
-  max: 0.25,
-  type: 'number',
-}
-
-const ZInputProps = {
-  step: 1,
-  min: 0,
-  max: 80,
-  type: 'number',
 }
 
 function InsPoI() {
@@ -219,12 +220,33 @@ function InsPoI() {
   const [value2, setValue2] = React.useState(0);
   const [value3, setValue3] = React.useState(0);
 
-  const columns = [
+  const XInputProps = useMemo(() => { return {
+    step: 10,
+    min: 1816,
+    max: 2019,
+    type: 'number',
+  }}, []);
+  
+  const YInputProps = useMemo(() => { return {
+    step: 0.01,
+    min: 0,
+    max: 0.25,
+    type: 'number',
+  }}, []);
+  
+  const ZInputProps = useMemo(() => { return {
+    step: 1,
+    min: 0,
+    max: 80,
+    type: 'number',
+  }}, []);
+
+  const columns = useMemo(() => [
     { field: 'id', headerName: 'ID', width: 30 },
     { field: 'x', headerName: 'X', type: 'number', width: 80 },
     { field: 'y', headerName: 'Y', type: 'number', width: 80 },
     { field: 'z', headerName: 'Z', type: 'number', width: 80, },
-  ];
+  ], []);
   
   const rowsOfInterest = usePOIStore((state) => state.rowsOfInterest);
   const setRowsOfInterest = usePOIStore((state) => state.setRowsOfInterest);
@@ -308,7 +330,9 @@ function Inspector() {
     <div>
       <InsCamera/>
       <br/><br/><br/>
-      <InsPoI/>
+      {
+        // <InsPoI/>
+      }
     </div>
   );
 }

@@ -42,14 +42,17 @@ const useCanvasStore = create((set) => ({
   setMode: (val) => set((state) => {return { mode: val }}),
   setProgressVal: (val) => set((state) => {return { progressVal: val }}),
 
-  camX: 1000, setCamX: (val) => set((state) => {return { camX: val }}),
-  camY: 1000, setCamY: (val) => set((state) => {return { camY: val }}),
-  camZ: 1000, setCamZ: (val) => set((state) => {return { camZ: val }}),
-  lookX: 0, setLookX: (val) => set((state) => {return { lookX: val }}),
-  lookY: 0, setLookY: (val) => set((state) => {return { lookY: val }}),
-  lookZ: 0, setLookZ: (val) => set((state) => {return { lookZ: val }}),
-  zoom: 10, setZoom: (val) => set((state) => {return { zoom: val }}),
-
+  spec: {
+    'camX': 1000,
+    'camY': 1000,
+    'camZ': 1000,
+    'lookX': 0,
+    'lookY': 0,
+    'lookZ': 0,
+    'zoom': 10,
+  },
+  setSpec: (name, val) => set((state) => {return { spec: { ...state.spec, [name]: val }}}),
+  setWholeSpec: (val) => set((state) => { return { spec: val }}),
 }))
 
 const usePOIStore = create((set) => ({
@@ -105,6 +108,15 @@ const useClipStore = create((set) => ({
       "camZoom": 100,
     }
   ],
+
+  addCam: (val) => set((state) => {return { cam: state.cam.concat([{
+    "id": state.cam.length,
+    "progress": val.progress,
+    "camX": val.camX,
+    "camY": val.camY,
+    "camZ": val.camZ,
+    "camZoom": val.zoom,
+  }])}}),
 
   getAnimation: () => set((state) => {return {animation: animationGenerator(state.cam)}}),
 }));

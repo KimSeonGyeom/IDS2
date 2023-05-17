@@ -2,7 +2,6 @@ import * as THREE from 'three'
 import React, { useRef, useEffect } from 'react'
 import { shallow } from 'zustand/shallow'
 
-import { useUpdate } from 'react-three-fiber'
 import { useThree, useFrame } from '@react-three/fiber'
 import { OrbitControls, OrthographicCamera } from '@react-three/drei';
 import { useCanvasStore, useClipStore, MODE_EDIT_CAMERA, MODE_PLAY_SCROLLY } from './Store';
@@ -11,30 +10,27 @@ import { If } from './Constants';
 
 const OrthoCamera = React.forwardRef((props, ref) => {
   const mainCamera = useRef();
-  const control = useRef();
 
   const [animation] = useClipStore((state) => [state.animation], shallow);
   const [mode, progressVal] = useCanvasStore((state) => [state.mode, state.progressVal], shallow);
-  const [camX, camY, camZ, lookX, lookY, lookZ, zoom] = useCanvasStore((state) => [state.camX, state.camY, state.camZ, state.lookX, state.lookY, state.lookZ, state.zoom], shallow)
-  const [setCamX, setCamY, setCamZ, setLookX, setLookY, setLookZ, setZoom] = useCanvasStore((state) => [
-    state.setCamX, state.setCamY, state.setCamZ, state.setLookX, state.setLookY, state.setLookZ, state.setZoom
-  ], shallow);
+  const [spec, setWholeSpec] = useCanvasStore((state) => [ state.spec, state.setWholeSpec ], shallow);
 
   useEffect(() => {
+    if(mode == MODE_EDIT_CAMERA){
       mainCamera.current.position.set(
-        camX,
-        camY,
-        camZ,
+        spec.camX,
+        spec.camY,
+        spec.camZ,
       );
-      mainCamera.current.zoom = zoom;
+      mainCamera.current.zoom = spec.zoom;
       mainCamera.current.lookAt(
-        lookX, 
-        lookY, 
-        lookZ
+        spec.lookX, 
+        spec.lookY, 
+        spec.lookZ
       );
       mainCamera.current.updateProjectionMatrix();
-    },
-    [camX, camY, camZ, lookX, lookY, lookZ, zoom]
+    }},
+    [spec]
   );
 
   useEffect(() => {
@@ -48,12 +44,6 @@ const OrthoCamera = React.forwardRef((props, ref) => {
       mainCamera.current.zoom = animation_camera.camZoom;
       mainCamera.current.lookAt(0, 0, 0);
       mainCamera.current.updateProjectionMatrix();
-      // console.log(gl.info.render)
-      setCamX(animation_camera.camX);
-      setCamY(animation_camera.camY);
-      setCamZ(animation_camera.camZ);
-      // lookAt
-      setZoom(animation_camera.camZoom);
     }},
     [progressVal]
   );
@@ -63,16 +53,16 @@ const OrthoCamera = React.forwardRef((props, ref) => {
       <OrthographicCamera ref={mainCamera} makeDefault near={0} far={10000} />
       <If if={mode == MODE_EDIT_CAMERA}>
         <OrbitControls
-          ref={control}
-          onChange={(e) => {
-            console.log(e.target);
-            setCamX(e.target.object.position.x);
-            setCamY(e.target.object.position.y);
-            setCamZ(e.target.object.position.z);
-            setZoom(e.target.object.zoom);
-            setLookX(e.target.target.x)
-            setLookY(e.target.target.y)
-            setLookZ(e.target.target.z)
+          onEnd={(e) => {
+            setWholeSpec({
+              'camX': e.target.object.position.x,
+              'camY': e.target.object.position.y,
+              'camZ': e.target.object.position.z,
+              'lookX': e.target.target.x,
+              'lookY': e.target.target.y,
+              'lookZ': e.target.target.z,
+              'zoom': e.target.object.zoom,
+            });
           }}
           enablePan={true}
           enableZoom={true}

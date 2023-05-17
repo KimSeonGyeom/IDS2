@@ -132,12 +132,8 @@ function CamZoom() {
   )
 }
 
-function InsCamera() {
-  const [getAnimation, animation, cam, addCam] = useClipStore((state) => [
-    state.getAnimation, state.animation, state.cam, state.addCam
-  ], shallow);
-  const [mode, setMode, progressVal] = useCanvasStore((state) => [state.mode, state.setMode, state.progressVal], shallow);
-  const [spec] = useCanvasStore((state) => [state.spec], shallow);
+function ClipsTable() {
+  const [cam] = useClipStore((state) => [ state.cam], shallow);
 
   const columns = useMemo(() => [
     { field: 'id', headerName: 'ID', width: 30 },
@@ -148,7 +144,35 @@ function InsCamera() {
     { field: 'camZoom', headerName: 'Zoom', type: 'number', width: 80, },
   ], []);
 
-  const handleClick = useCallback(() =>{
+  return(
+    <div style={{ height: 'fit-content', width: '100%', margin: '10px 0px' }}>
+      <DataGrid
+        density='compact'
+        rows={cam}
+        columns={columns}
+        pageSizeOptions={[5, 5]}
+        checkboxSelection
+        hideFooter={true}
+        onRowSelectionModelChange={(ids) => {
+          // const selectedIDs = new Set(ids);
+          // const selectedRowData = rowsOfInterest.filter((row) =>
+          //   selectedIDs.has(row.id)
+          // );
+          // setPointOfInterest(selectedRowData);
+        }}
+      />
+    </div>
+  )
+}
+
+function InsCamera() {
+  const [getAnimation, animation, addCam] = useClipStore((state) => [
+    state.getAnimation, state.animation, state.addCam
+  ], shallow);
+  const [mode, setMode, progressVal] = useCanvasStore((state) => [state.mode, state.setMode, state.progressVal], shallow);
+  const [spec] = useCanvasStore((state) => [state.spec], shallow);
+
+  const addClip = useCallback(() =>{
     addCam({
       "progress": progressVal / scrollLength * 100,
       "camX": spec.camX,
@@ -168,46 +192,18 @@ function InsCamera() {
       <MyButton 
         size="small" disabled={mode==MODE_EDIT_CAMERA} variant="contained" 
         onClick={() => { setMode(MODE_EDIT_CAMERA) }}
-      >Edit Mode</MyButton>
-      <br/><br/>
+      >Edit Mode</MyButton><br/><br/>
       <b>Clip</b><br/>
-      {
-        <>
-          <CamPosX />
-          <br/>
-          <CamPosY />
-          <br/>
-          <CamPosZ />
-          <br/>
-          <CamZoom />
-          <br/>
-        </>
-      }
-      <MyButton 
-        size="small" variant="contained" 
-        onClick={() => {handleClick();}}
-      >
-        Add Clip
-      </MyButton>
-      {
-        <div style={{ height: 'fit-content', width: '100%', margin: '10px 0px' }}>
-          <DataGrid
-            density='compact'
-            rows={cam}
-            columns={columns}
-            pageSizeOptions={[5, 5]}
-            checkboxSelection
-            hideFooter={true}
-            onRowSelectionModelChange={(ids) => {
-              // const selectedIDs = new Set(ids);
-              // const selectedRowData = rowsOfInterest.filter((row) =>
-              //   selectedIDs.has(row.id)
-              // );
-              // setPointOfInterest(selectedRowData);
-            }}
-          />
-        </div>
-      }
+      <CamPosX />
+      <br/>
+      <CamPosY />
+      <br/>
+      <CamPosZ />
+      <br/>
+      <CamZoom />
+      <br/>
+      <MyButton size="small" variant="contained"  onClick={() => {addClip();}}> Add Clip </MyButton>
+      <ClipsTable />
     </>
   )
 }

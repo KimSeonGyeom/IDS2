@@ -33,7 +33,7 @@ const OrthoCamera = React.forwardRef((props, ref) => {
     [spec]
   );
 
-  useEffect(() => {
+  useFrame(() => {
     if(mode == MODE_PLAY_SCROLLY){
       let animation_camera = animation[progressVal]
       mainCamera.current.position.set(
@@ -44,9 +44,8 @@ const OrthoCamera = React.forwardRef((props, ref) => {
       mainCamera.current.zoom = animation_camera.camZoom;
       mainCamera.current.lookAt(0, 0, 0);
       mainCamera.current.updateProjectionMatrix();
-    }},
-    [progressVal]
-  );
+    }
+  })
 
   return(
     <>
@@ -70,9 +69,6 @@ const OrthoCamera = React.forwardRef((props, ref) => {
           zoomSpeed={0.25}
           style={{zIndex: 5}} />
       </If>
-      {
-        
-      }
     </>
   );
 });

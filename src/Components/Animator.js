@@ -5,7 +5,7 @@ import { shallow } from 'zustand/shallow'
 import { Slider } from '@mui/material';
 // import { styled } from '@mui/material/styles';
 
-import { toFixed2, useCanvasStore, useClipStore } from '../BasicElements/Store';
+import { toFixed2, useCanvasStore } from '../BasicElements/Store';
 import { scrollLength } from '../BasicElements/Constants';
 
 function Animator() {

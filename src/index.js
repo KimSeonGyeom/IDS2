@@ -9,7 +9,7 @@ import Inspector from './Components/Inspector';
 import Animator from './Components/Animator';
 // import reportWebVitals from './reportWebVitals';
 
-import { useCanvasStore, useClipStore } from './BasicElements/Store';
+import { MODE_PLAY_SCROLLY, useCanvasStore, useClipStore } from './BasicElements/Store';
 import { scrollLength } from './BasicElements/Constants';
 
 
@@ -46,7 +46,7 @@ function CanvasBox() {
   // const scroll = useRef(0);
 
   const [getAnimation] = useClipStore((state) => [state.getAnimation], shallow);
-  const [setProgressVal] = useCanvasStore((state) => [state.setProgressVal], shallow);
+  const [mode, setProgressVal] = useCanvasStore((state) => [state.mode, state.setProgressVal], shallow);
 
   const requestRef = React.useRef();
   const previousTimeRef = React.useRef();
@@ -68,7 +68,7 @@ function CanvasBox() {
   }, []);
 
   return(
-    <div id={"scroller"}>
+    <div id={"scroller"} style={{overflow: mode==MODE_PLAY_SCROLLY? 'scroll':'hidden'}}>
       <div id={"canvas"}>
         <Suspense fallback={<div>Now Loading</div>}>
           <Canvas>

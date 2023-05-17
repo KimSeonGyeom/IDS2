@@ -3,6 +3,9 @@ import create from 'zustand';
 
 import { scrollLength } from './Constants';
 
+const MODE_EDIT_CAMERA = 1000;
+const MODE_PLAY_SCROLLY = 1001;
+
 const toFixed2 = (float) =>{
   return Number.parseFloat(float).toFixed(2);
 }
@@ -34,8 +37,19 @@ const animationGenerator = (clips) =>{
 }
 
 const useCanvasStore = create((set) => ({
+  mode: MODE_PLAY_SCROLLY,
   progressVal: 0,
+  setMode: (val) => set((state) => {return { mode: val }}),
   setProgressVal: (val) => set((state) => {return { progressVal: val }}),
+
+  camX: 1000, setCamX: (val) => set((state) => {return { camX: val }}),
+  camY: 1000, setCamY: (val) => set((state) => {return { camY: val }}),
+  camZ: 1000, setCamZ: (val) => set((state) => {return { camZ: val }}),
+  lookX: 0, setLookX: (val) => set((state) => {return { lookX: val }}),
+  lookY: 0, setLookY: (val) => set((state) => {return { lookY: val }}),
+  lookZ: 0, setLookZ: (val) => set((state) => {return { lookZ: val }}),
+  zoom: 10, setZoom: (val) => set((state) => {return { zoom: val }}),
+
 }))
 
 const usePOIStore = create((set) => ({
@@ -62,7 +76,7 @@ const useClipStore = create((set) => ({
     "progress": 0,
     "camX": 1000,
     "camY": 1000,
-    "camZ": 1000,
+    "camZ": 0,
     "camZoom": 10,
   }),
   cam: [
@@ -95,4 +109,4 @@ const useClipStore = create((set) => ({
   getAnimation: () => set((state) => {return {animation: animationGenerator(state.cam)}}),
 }));
 
-export { toFixed2, useCanvasStore, usePOIStore, useClipStore };
+export { toFixed2, MODE_EDIT_CAMERA, MODE_PLAY_SCROLLY, useCanvasStore, usePOIStore, useClipStore };

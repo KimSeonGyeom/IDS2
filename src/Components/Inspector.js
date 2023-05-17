@@ -1,12 +1,13 @@
 import * as THREE from 'three'
 import React, { useRef, useFrame, useLayoutEffect, useMemo } from 'react'
+import { useThree } from '@react-three/fiber'
 import { shallow } from 'zustand/shallow'
 
 import { Slider, Button } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import MuiInput from '@mui/material/Input';
 import { styled } from '@mui/material/styles';
-import { useCanvasStore, useClipStore, usePOIStore } from '../BasicElements/Store';
+import { MODE_EDIT_CAMERA, MODE_PLAY_SCROLLY, useCanvasStore, useClipStore, usePOIStore } from '../BasicElements/Store';
 
 const Input = styled(MuiInput)`
   width: 64px;
@@ -41,23 +42,19 @@ const zoomInputProps = {
 
 function CamPosX() {
   const [animation] = useClipStore((state) => [state.animation], shallow);
-  const [progressVal] = useCanvasStore((state) => [state.progressVal], shallow);
+  const [mode, progressVal, camX, setCamX] = useCanvasStore((state) => [state.mode, state.progressVal, state.camX, state.setCamX], shallow);
 
   return (
     <>
       camPosX: &nbsp;
-      <Input value={animation[progressVal].camX} size="small" inputProps={posInputProps}
-        // onChange={(e) => { 
-        //   if(e.target.value == camPosX){
-        //     return;
-        //   }else{
-            // setCamPosX(e.target.value); 
-          // }
-        // }}
+      <Input value={mode == MODE_PLAY_SCROLLY? animation[progressVal].camX : mode == MODE_EDIT_CAMERA? camX : 1000} 
+        size="small" inputProps={posInputProps}
+        onChange={(e) => { if(mode == MODE_EDIT_CAMERA){ setCamX(e.target.value); } }}
       />
       <MySlider
-        value={parseFloat(animation[progressVal].camX)} min={0} max={2000} step={10} aria-labelledby="input-slider"
-        // onChange={(e) => { setCamPosX(e.target.value); }}
+        value={mode == MODE_PLAY_SCROLLY? animation[progressVal].camX : mode == MODE_EDIT_CAMERA? camX : 1000} 
+        min={0} max={2000} step={10} aria-labelledby="input-slider"
+        onChange={(e) => { if(mode == MODE_EDIT_CAMERA){ setCamX(e.target.value); } }}
       />
     </>
   )
@@ -65,23 +62,20 @@ function CamPosX() {
 
 function CamPosY() {
   const [animation] = useClipStore((state) => [state.animation], shallow);
-  const [progressVal] = useCanvasStore((state) => [state.progressVal], shallow);
+  const [mode, progressVal, camY, setCamY] = useCanvasStore((state) => [state.mode, state.progressVal, state.camY, state.setCamY], shallow);
 
   return (
     <>
       camPosY: &nbsp;
-      <Input value={animation[progressVal].camY} size="small" inputProps={posInputProps}
-        // onChange={(e) => { 
-        //   if(e.target.value == camPosY){
-        //     return;
-        //   }else{
-            // setCamPosY(e.target.value); 
-          // }
-        // }}
+      <Input 
+        value={mode == MODE_PLAY_SCROLLY? animation[progressVal].camY : mode == MODE_EDIT_CAMERA? camY : 1000} 
+        size="small" inputProps={posInputProps}
+        onChange={(e) => { if(mode == MODE_EDIT_CAMERA){ setCamY(e.target.value); } }}
       />
       <MySlider
-        value={parseFloat(animation[progressVal].camY)} min={0} max={2000} step={10} aria-labelledby="input-slider"
-        // onChange={(e) => { setCamPosY(e.target.value); }}
+        value={parseFloat(mode == MODE_PLAY_SCROLLY? animation[progressVal].camY : mode == MODE_EDIT_CAMERA? camY : 1000)} 
+        min={0} max={2000} step={10} aria-labelledby="input-slider"
+        onChange={(e) => { if(mode == MODE_EDIT_CAMERA){ setCamY(e.target.value); } }}
       />
     </>
   )
@@ -89,23 +83,20 @@ function CamPosY() {
 
 function CamPosZ() {
   const [animation] = useClipStore((state) => [state.animation], shallow);
-  const [progressVal] = useCanvasStore((state) => [state.progressVal], shallow);
+  const [mode, progressVal, camZ, setCamZ] = useCanvasStore((state) => [state.mode, state.progressVal, state.camZ, state.setCamZ], shallow);
 
   return (
     <>
       camPosZ: &nbsp;
-      <Input value={animation[progressVal].camZ} size="small" inputProps={posInputProps}
-        // onChange={(e) => { 
-        //   if(e.target.value == camPosZ){
-        //     return;
-        //   }else{
-            // setCamPosZ(e.target.value); 
-          // }
-        // }}
+      <Input 
+        value={mode == MODE_PLAY_SCROLLY? animation[progressVal].camZ : mode == MODE_EDIT_CAMERA? camZ : 0} 
+        size="small" inputProps={posInputProps}
+        onChange={(e) => { if(mode == MODE_EDIT_CAMERA){ setCamZ(e.target.value); } }}
       />
       <MySlider
-        value={parseFloat(animation[progressVal].camZ)} min={-1000} max={1000} step={10} aria-labelledby="input-slider"
-        // onChange={(e) => { setCamPosZ(e.target.value); }}
+        value={mode == MODE_PLAY_SCROLLY? animation[progressVal].camZ : mode == MODE_EDIT_CAMERA? camZ : 0} 
+        min={-1000} max={1000} step={10} aria-labelledby="input-slider"
+        onChange={(e) => { if(mode == MODE_EDIT_CAMERA){ setCamZ(e.target.value); } }}
       />
     </>
   )
@@ -113,23 +104,19 @@ function CamPosZ() {
 
 function CamZoom() {
   const [animation] = useClipStore((state) => [state.animation], shallow);
-  const [progressVal] = useCanvasStore((state) => [state.progressVal], shallow);
+  const [mode, progressVal, zoom, setZoom] = useCanvasStore((state) => [state.mode, state.progressVal, state.zoom, state.setZoom], shallow);
 
   return (
     <>
       camZoom: &nbsp;
-      <Input value={animation[progressVal].camZoom} size="small" inputProps={zoomInputProps}
-        // onChange={(e) => { 
-        //   if(e.target.value == camZoom){
-        //     return;
-        //   }else{
-            // setCamZoom(e.target.value); 
-          // }
-        // }}
+      <Input value={mode == MODE_PLAY_SCROLLY? animation[progressVal].camZoom : mode == MODE_EDIT_CAMERA? zoom : 10} 
+        size="small" inputProps={zoomInputProps}
+        onChange={(e) => { if(mode == MODE_EDIT_CAMERA){ setZoom(e.target.value); } }}
       />
       <MySlider
-        value={parseFloat(animation[progressVal].camZoom)} min={1} max={200} step={1} aria-labelledby="input-slider"
-        // onChange={(e) => { setCamZoom(e.target.value); }}
+        value={mode == MODE_PLAY_SCROLLY? animation[progressVal].camZoom : mode == MODE_EDIT_CAMERA? zoom : 10} 
+        min={1} max={200} step={1} aria-labelledby="input-slider"
+        onChange={(e) => { if(mode == MODE_EDIT_CAMERA){ setZoom(e.target.value); } }}
       />
     </>
   )
@@ -137,6 +124,7 @@ function CamZoom() {
 
 function InsCamera() {
   const [getAnimation, animation, cam] = useClipStore((state) => [state.getAnimation, state.animation, state.cam], shallow);
+  const [mode, setMode] = useCanvasStore((state) => [state.mode, state.setMode], shallow);
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 30 },
@@ -150,6 +138,15 @@ function InsCamera() {
 
   return (
     <>
+      <MyButton 
+        size="small" disabled={mode==MODE_PLAY_SCROLLY} variant="contained" 
+        onClick={() => { setMode(MODE_PLAY_SCROLLY) }}
+      >Play Mode</MyButton>
+      <MyButton 
+        size="small" disabled={mode==MODE_EDIT_CAMERA} variant="contained" 
+        onClick={() => { setMode(MODE_EDIT_CAMERA) }}
+      >Edit Mode</MyButton>
+      <br/><br/>
       <b>Clip</b><br/>
       {
         <>

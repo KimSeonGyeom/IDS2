@@ -1,5 +1,9 @@
 export const scrollLength = 5000;
 
+export function If(props){
+  return <>{props.if && props.children}</>;
+};
+
 export const total_data = [[1816,   0, 0.205344],
 [1816,   1, 0.046685],
 [1816,   2, 0.034120],

@@ -112,11 +112,11 @@ const useClipStore = create((set) => ({
   addCam: (val) => set((state) => {
     let newCam = state.cam.concat([{
       "id": state.cam.length,
-      "progress": val.progress,
-      "camX": val.camX,
-      "camY": val.camY,
-      "camZ": val.camZ,
-      "camZoom": val.zoom,
+      "progress": Number.parseFloat(val.progress).toFixed(2),
+      "camX": Number.parseFloat(val.camX).toFixed(2),
+      "camY": Number.parseFloat(val.camY).toFixed(2),
+      "camZ": Number.parseFloat(val.camZ).toFixed(2),
+      "camZoom": Number.parseFloat(val.zoom).toFixed(2),
     }]).sort((a, b) => a.progress - b.progress);
 
     return { 

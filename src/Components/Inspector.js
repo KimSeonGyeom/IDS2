@@ -4,6 +4,11 @@ import { useThree } from '@react-three/fiber'
 import { shallow } from 'zustand/shallow'
 
 import { Slider, Button } from '@mui/material';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
 import { DataGrid } from '@mui/x-data-grid';
 import MuiInput from '@mui/material/Input';
 import { styled } from '@mui/material/styles';
@@ -23,6 +28,16 @@ const MySlider = styled(Slider)`
   margin: 0px 30px;
   width: 200px;
   padding: 0px;
+`
+
+const MyTableCell = styled(TableCell)`
+  padding: 0px;
+  width: 80px;
+  height: 20px;
+`
+
+const MyTable = styled(Table)`
+  width: fit-content;
 `
 
 const posInputProps = {
@@ -134,34 +149,60 @@ function CamZoom() {
 
 function ClipsTable() {
   const [cam] = useClipStore((state) => [ state.cam], shallow);
+  
+  const createData = useCallback((id, progress, camX, camY, camZ, camZoom) => {
+    return { id, progress, camX, camY, camZ, camZoom };
+  }, []);
 
-  const columns = useMemo(() => [
-    { field: 'id', headerName: 'ID', width: 30 },
-    { field: 'progress', headerName: 'Prgs', type: 'number', width: 80 },
-    { field: 'camX', headerName: 'X', type: 'number', width: 80 },
-    { field: 'camY', headerName: 'Y', type: 'number', width: 80, },
-    { field: 'camZ', headerName: 'Z', type: 'number', width: 80, },
-    { field: 'camZoom', headerName: 'Zoom', type: 'number', width: 80, },
-  ], []);
+  const idSpec = useMemo(() => {
+    return(
+      {
+        width: '30px',
+        textAlign: 'center'
+      }
+    )
+  }, [])
+
+  const THead = useMemo(() => {
+    return(
+      <TableHead>
+        <TableRow>
+          <MyTableCell style={idSpec} > ID </MyTableCell>
+          <MyTableCell align="right"> Prgs </MyTableCell>
+          <MyTableCell align="right"> X </MyTableCell>
+          <MyTableCell align="right"> Y </MyTableCell>
+          <MyTableCell align="right"> Z </MyTableCell>
+          <MyTableCell align="right"> Zoom </MyTableCell>
+        </TableRow>
+      </TableHead>
+    );
+  }, []);
+
+  const TBody = useMemo(() => {
+    return(
+      <TableBody>
+        {cam.map((row) => (
+          <TableRow
+            key={row.name}
+            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+          >
+            <MyTableCell style={idSpec} component="th" scope="row"> {row.id} </MyTableCell>
+            <MyTableCell align="right">{row.progress}</MyTableCell>
+            <MyTableCell align="right">{row.camX}</MyTableCell>
+            <MyTableCell align="right">{row.camY}</MyTableCell>
+            <MyTableCell align="right">{row.camZ}</MyTableCell>
+            <MyTableCell align="right">{row.camZoom}</MyTableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    );
+  }, [cam]);
 
   return(
-    <div style={{ height: 'fit-content', width: '100%', margin: '10px 0px' }}>
-      <DataGrid
-        density='compact'
-        rows={cam}
-        columns={columns}
-        pageSizeOptions={[5, 5]}
-        checkboxSelection
-        hideFooter={true}
-        onRowSelectionModelChange={(ids) => {
-          // const selectedIDs = new Set(ids);
-          // const selectedRowData = rowsOfInterest.filter((row) =>
-          //   selectedIDs.has(row.id)
-          // );
-          // setPointOfInterest(selectedRowData);
-        }}
-      />
-    </div>
+    <MyTable size="small" aria-label="a dense table">
+      {THead}
+      {TBody}
+    </MyTable>
   )
 }
 
@@ -169,7 +210,8 @@ function InsCamera() {
   const [getAnimation, animation, addCam] = useClipStore((state) => [
     state.getAnimation, state.animation, state.addCam
   ], shallow);
-  const [mode, setMode, progressVal] = useCanvasStore((state) => [state.mode, state.setMode, state.progressVal], shallow);
+  const mode = useCanvasStore((state) => state.mode);
+  const [setMode, progressVal] = useCanvasStore((state) => [state.setMode, state.progressVal], shallow);
   const [spec] = useCanvasStore((state) => [state.spec], shallow);
 
   const addClip = () =>{
@@ -180,19 +222,27 @@ function InsCamera() {
       "camZ": spec.camZ,
       "zoom": spec.zoom,
     })
-    // getAnimation();
   }
+
+  const ModeButtons = useMemo(() => {
+    return(
+      <>
+        <MyButton 
+          size="small" disabled={mode==MODE_PLAY_SCROLLY} variant="contained" 
+          onClick={() => { setMode(MODE_PLAY_SCROLLY) }}
+        >Play Mode</MyButton>
+        <MyButton 
+          size="small" disabled={mode==MODE_EDIT_CAMERA} variant="contained" 
+          onClick={() => { setMode(MODE_EDIT_CAMERA) }}
+        >Edit Mode</MyButton>
+      </>
+    )
+  }, [mode])
 
   return (
     <>
-      <MyButton 
-        size="small" disabled={mode==MODE_PLAY_SCROLLY} variant="contained" 
-        onClick={() => { setMode(MODE_PLAY_SCROLLY) }}
-      >Play Mode</MyButton>
-      <MyButton 
-        size="small" disabled={mode==MODE_EDIT_CAMERA} variant="contained" 
-        onClick={() => { setMode(MODE_EDIT_CAMERA) }}
-      >Edit Mode</MyButton><br/><br/>
+      {ModeButtons}
+      <br/><br/>
       <b>Clip</b><br/>
       <CamPosX />
       <br/>
@@ -247,6 +297,35 @@ function InsPoI() {
   const rowsOfInterest = usePOIStore((state) => state.rowsOfInterest);
   const setRowsOfInterest = usePOIStore((state) => state.setRowsOfInterest);
 
+  const ADDPOIButton = useMemo(() => {
+    return(
+      <MyButton 
+        size="small" variant="contained" 
+        onClick={() => {
+          let [x, y, z] = [
+            document.getElementById('poiInput-1').value, 
+            document.getElementById('poiInput-2').value, 
+            document.getElementById('poiInput-3').value
+          ];
+
+          for(let i=1; i<rowsOfInterest.length + 2; i++){
+            if(rowsOfInterest.filter(item => item.id == i).length == 0){
+              setRowsOfInterest(rowsOfInterest.concat({
+                id: i, 
+                x: x.length == 0 ? null : x * 1, 
+                y: y.length == 0 ? null : y * 1, 
+                z: z.length == 0 ? null : z * 1, 
+              }));
+              break;
+            }
+          }
+        }}
+      >
+        Add
+      </MyButton>
+    )
+  }, [rowsOfInterest])
+
   return (
     <>
       <b>Point of Interest(s)</b><br/>
@@ -273,31 +352,7 @@ function InsPoI() {
       <MySlider value={typeof value3 === 'number' ? value3 : 0} min={ZInputProps.min} max={ZInputProps.max} step={1} 
         aria-labelledby="input-slider" onChange={(e, newValue) => { setValue3(newValue); }}
       /><br/>
-      <MyButton 
-        size="small" variant="contained" 
-        onClick={() => {
-          let [x, y, z] = [
-            document.getElementById('poiInput-1').value, 
-            document.getElementById('poiInput-2').value, 
-            document.getElementById('poiInput-3').value
-          ];
-          console.log(x.length, y.length, z.length)
-
-          for(let i=1; i<rowsOfInterest.length + 2; i++){
-            if(rowsOfInterest.filter(item => item.id == i).length == 0){
-              setRowsOfInterest(rowsOfInterest.concat({
-                id: i, 
-                x: x.length == 0 ? null : x * 1, 
-                y: y.length == 0 ? null : y * 1, 
-                z: z.length == 0 ? null : z * 1, 
-              }));
-              break;
-            }
-          }
-        }}
-      >
-        Add
-      </MyButton>
+      {ADDPOIButton}
       <div style={{ height: 'fit-content', width: '100%', margin: '10px 0px' }}>
         <DataGrid
           density='compact'
@@ -326,9 +381,7 @@ function Inspector() {
     <div>
       <InsCamera/>
       <br/><br/><br/>
-      {
-        // <InsPoI/>
-      }
+      <InsPoI/>
     </div>
   );
 }

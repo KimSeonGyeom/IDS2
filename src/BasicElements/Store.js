@@ -109,14 +109,21 @@ const useClipStore = create((set) => ({
     }
   ],
 
-  addCam: (val) => set((state) => {return { cam: state.cam.concat([{
-    "id": state.cam.length,
-    "progress": val.progress,
-    "camX": val.camX,
-    "camY": val.camY,
-    "camZ": val.camZ,
-    "camZoom": val.zoom,
-  }])}}),
+  addCam: (val) => set((state) => {
+    let newCam = state.cam.concat([{
+      "id": state.cam.length,
+      "progress": val.progress,
+      "camX": val.camX,
+      "camY": val.camY,
+      "camZ": val.camZ,
+      "camZoom": val.zoom,
+    }]).sort((a, b) => a.progress - b.progress);
+
+    return { 
+      cam: newCam,
+      animation: animationGenerator(newCam)
+    }
+  }),
 
   getAnimation: () => set((state) => {return {animation: animationGenerator(state.cam)}}),
 }));

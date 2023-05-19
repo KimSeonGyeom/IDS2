@@ -172,7 +172,7 @@ function InsCamera() {
   const [mode, setMode, progressVal] = useCanvasStore((state) => [state.mode, state.setMode, state.progressVal], shallow);
   const [spec] = useCanvasStore((state) => [state.spec], shallow);
 
-  const addClip = useCallback(() =>{
+  const addClip = () =>{
     addCam({
       "progress": progressVal / scrollLength * 100,
       "camX": spec.camX,
@@ -180,8 +180,8 @@ function InsCamera() {
       "camZ": spec.camZ,
       "zoom": spec.zoom,
     })
-    getAnimation();
-  }, [progressVal, spec])
+    // getAnimation();
+  }
 
   return (
     <>

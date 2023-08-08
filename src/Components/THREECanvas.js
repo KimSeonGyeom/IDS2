@@ -1,4 +1,4 @@
-
+import * as THREE from 'three'
 import React, { useRef, useLayoutEffect, useMemo, Suspense } from 'react'
 
 import { OrthoCamera } from '../BasicElements/Camera';

@@ -1,10 +1,12 @@
-import React, { useLayoutEffect, Suspense, forwardRef, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, Suspense, forwardRef, useRef } from 'react';
 import { Canvas } from '@react-three/fiber'
+import { useThree, useFrame } from '@react-three/fiber';
 
 import ReactDOM from 'react-dom/client';
 import { shallow } from 'zustand/shallow'
 import './index.css';
-import THREECanvas from './Components/THREECanvas';
+import { OrthoCamera } from './BasicElements/Camera';
+import { Heatmap } from './BasicElements/VizComponents';
 import Inspector from './Components/Inspector';
 import Animator from './Components/Animator';
 // import reportWebVitals from './reportWebVitals';
@@ -41,6 +43,27 @@ const Overlay = forwardRef(({ caption, scroll }, ref) => (
   </div>
 ))
 
+function MyCanvas() {
+  const mainCamera = useRef();
+  const mainCanvas = useRef();
+
+  useEffect(() => {
+    const gl = mainCanvas.current.getContext("webgl2");
+    gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+    gl.enable(gl.DEPTH_TEST);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  }, [])
+
+  return(
+    <Canvas ref={mainCanvas}>
+      <OrthoCamera ref={mainCamera} />
+      <ambientLight />
+      <pointLight position={[10, 10, 10]} />
+      <Heatmap />
+    </Canvas>
+  )
+}
+
 function CanvasBox() {
   // const overlay = useRef();
   // const scroll = useRef(0);
@@ -74,21 +97,9 @@ function CanvasBox() {
 
   return(
     <div id={"scroller"} 
-      style={{overflow: mode==MODE_PLAY_SCROLLY? 'scroll':'hidden'}}
-      onScrollEnd={() => {
-        let animation_camera = animation[progressVal]
-        setSpec('camX', animation_camera.camX);
-        setSpec('camY', animation_camera.camY);
-        setSpec('camZ', animation_camera.camZ);
-        // lookAt
-        setSpec('zoom', animation_camera.camZoom);
-      }}>
-      <div id={"canvas"}>
-        <Suspense fallback={<div>Now Loading</div>}>
-          <Canvas>
-            <THREECanvas frameloop="demand" />
-          </Canvas>
-        </Suspense>
+      style={{overflow: mode==MODE_PLAY_SCROLLY? 'scroll':'hidden'}}>
+      <div id={"canvas"}>        
+        <MyCanvas />
       </div>
       <div id={"dummy"}> . </div>
     </div>
